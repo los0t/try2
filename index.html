@@ -1,123 +1,214 @@
 <!DOCTYPE html>
+
 <html lang="ja">
-<link rel="stylesheet" href="styles.css">
-<div class="yokobou"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NumChat</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0e0e14;
+      --surface: #16161f;
+      --card: #1e1e2a;
+      --border: #2e2e42;
+      --accent: #6c63ff;
+      --text: #e4e4f0;
+      --muted: #666680;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); }
 
-<div style="text-align: center">
-
-
-<style>
-    .text-box{position: relative;
-    font-size: 70px;
-    font-family: Arial, Helvetica, sans-serif;
-    font-weight: bold;
-    text-shadow: 3px 3px 6px rgb(0, 0, 0);
-    color: rgb(255, 0, 0);
+```
+/* ── ログイン ── */
+#login { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+#login.hide { display: none; }
+.login-box {
+  background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+  padding: 48px 40px; width: 340px;
+  display: flex; flex-direction: column; gap: 20px; align-items: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,.5);
 }
-.text-box::before{
-    content:" ";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgb(0, 0, 0);
-    z-index: -1;
+.logo { font-family: 'JetBrains Mono', monospace; font-size: 28px; color: var(--accent); }
+.login-box p { font-size: 13px; color: var(--muted); text-align: center; line-height: 1.7; }
+#id-input {
+  width: 100%; background: var(--surface);
+  border: 1.5px solid var(--border); border-radius: 12px;
+  color: var(--text); font-family: 'JetBrains Mono', monospace;
+  font-size: 32px; font-weight: 700; padding: 14px;
+  text-align: center; outline: none; letter-spacing: 4px;
+  transition: border-color .2s;
 }
-</style>
+#id-input:focus { border-color: var(--accent); }
+#id-input::placeholder { font-size: 16px; letter-spacing: 1px; color: var(--muted); }
+.enter-btn {
+  width: 100%; background: var(--accent); color: #fff;
+  border: none; border-radius: 12px; padding: 14px;
+  font-size: 16px; font-weight: 700; cursor: pointer;
+  font-family: inherit; transition: opacity .15s;
+}
+.enter-btn:hover { opacity: .85; }
 
+/* ── チャット ── */
+#chat { height: 100vh; display: flex; flex-direction: column; }
+#chat.hide { display: none; }
+
+.chat-header {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 14px 20px; display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+}
+.my-badge {
+  background: var(--accent); color: #fff;
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
+  padding: 4px 12px; border-radius: 20px;
+}
+.chat-title { font-size: 14px; color: var(--muted); }
+.back-btn {
+  margin-left: auto; background: none; border: 1px solid var(--border);
+  color: var(--muted); border-radius: 8px; padding: 5px 12px;
+  font-size: 12px; cursor: pointer; font-family: inherit; transition: all .15s;
+}
+.back-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+#messages {
+  flex: 1; overflow-y: auto; padding: 20px 16px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+#messages::-webkit-scrollbar { width: 4px; }
+#messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.msg { display: flex; gap: 10px; align-items: flex-end; animation: pop .15s ease; }
+.msg.mine { flex-direction: row-reverse; }
+@keyframes pop { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+.msg-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  flex-shrink: 0; color: #fff;
+}
+.msg-body { max-width: 70%; display: flex; flex-direction: column; gap: 3px; }
+.msg.mine .msg-body { align-items: flex-end; }
+.msg-name { font-size: 11px; color: var(--muted); }
+.msg-bubble {
+  padding: 10px 14px; border-radius: 18px;
+  font-size: 14px; line-height: 1.6; word-break: break-word;
+}
+.msg:not(.mine) .msg-bubble { background: var(--card); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+.msg.mine .msg-bubble { background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
+.msg-time { font-size: 10px; color: var(--muted); }
+
+.input-area {
+  padding: 14px 16px; border-top: 1px solid var(--border);
+  background: var(--surface); display: flex; gap: 10px; align-items: center; flex-shrink: 0;
+}
+#msg-input {
+  flex: 1; background: var(--card); border: 1.5px solid var(--border); border-radius: 24px;
+  color: var(--text); font-family: inherit; font-size: 14px; padding: 11px 18px;
+  outline: none; transition: border-color .2s;
+}
+#msg-input:focus { border-color: var(--accent); }
+#msg-input::placeholder { color: var(--muted); }
+.send-btn {
+  width: 44px; height: 44px; border-radius: 50%; background: var(--accent);
+  color: #fff; border: none; font-size: 18px; cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity .15s, transform .1s;
+}
+.send-btn:hover { opacity: .85; transform: scale(1.08); }
+
+.empty { text-align: center; color: var(--muted); font-size: 13px; margin: auto; line-height: 2; }
+```
+
+  </style>
+</head>
 <body>
-    <title>SENTOUKYOU</title>
 
-    <style>
+<div id="login">
+  <div class="login-box">
+    <div class="logo">NumChat</div>
+    <p>数字を入力してください<br>それがあなたのユーザー名になります</p>
+    <input id="id-input" type="number" placeholder="例: 1234" autocomplete="off" />
+    <button class="enter-btn" onclick="enter()">入室する →</button>
+  </div>
+</div>
 
-        .taitoru{
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 70px;
-            font-weight: bold;
-            text-shadow: 3px 3px 5px rgb(0, 0, 0);
-            color: rgb(255, 255, 255);}
+<div id="chat" class="hide">
+  <div class="chat-header">
+    <div class="my-badge" id="my-badge"></div>
+    <span class="chat-title">としてログイン中</span>
+    <button class="back-btn" onclick="leave()">← 戻る</button>
+  </div>
+  <div id="messages"><p class="empty">まだメッセージはありません<br>最初のメッセージを送ってみよう！</p></div>
+  <div class="input-area">
+    <input id="msg-input" type="text" placeholder="メッセージを入力..." autocomplete="off" maxlength="400" />
+    <button class="send-btn" onclick="send()">➤</button>
+  </div>
+</div>
 
-        .shadow-text{position: relative;
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 60px;
-            font-weight: bold;
-            text-shadow: 3px 3px 5px rgb(0, 0, 0);
-            text-shadow: 3px 3px 5px rgb(0, 0, 0);
-            color: rgb(255, 196, 0);
-            text-decoration: none; }
+<script>
+const COLORS = ['#6c63ff','#ff6b9d','#43e97b','#f7971e','#4facfe','#f953c6','#43cbff','#fa709a'];
+function avatarColor(id) { return COLORS[String(id).split('').reduce((a,c)=>a+c.charCodeAt(0),0) % COLORS.length]; }
+function fmt(ts) { const d=new Date(ts); return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'); }
 
-        .shadow-text::before{
-            content:" ";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 110%;
-            background-color: rgb(0, 0, 0);
-            z-index: -1;}
-        
-    </style>
+const KEY = 'numchat_msgs';
+function loadMsgs() { try { return JSON.parse(localStorage.getItem(KEY))||[]; } catch { return []; } }
+function saveMsgs(m) { localStorage.setItem(KEY, JSON.stringify(m)); }
 
-    <p class="text-box">戦闘狂ランキング</p>
-    <p class="shadow-text">５位.<a href="https://ja.wikipedia.org/wiki/%E3%83%9A%E3%83%B3%E3%82%AE%E3%83%B3" class="shadow-text">SOUSUKE</a></p>
-    <img src="8bfd600d7b9ea0e9fa6c3dc45f4cf2d8_t.jpeg" title="SAWADA" width="600" height="400">
-    <p class="shadow-text">４位.<a href="https://ja.wikipedia.org/wiki/%E3%83%81%E3%83%B3%E3%83%91%E3%83%B3%E3%82%B8%E3%83%BC" class="shadow-text">SAWADA</a></p>
-    <img src="LHHE7272.PNG" title="SAWADA" width="600" height="400">
-    <p class="shadow-text">３位.<a href="https://ja.wikipedia.org/wiki/%E7%B6%BF%E6%AF%9B" class="shadow-text">TAKABOU</a></p>
-    <img src="8bfd600d7b9ea0e9fa6c3dc45f4cf2d8_t.jpeg" title="SAWADA" width="600" height="400">
-    <p class="shadow-text">２位.<a href="https://ja.wikipedia.org/wiki/%E5%AE%AE%E6%9C%AC%E6%AD%A6%E8%94%B5" class="shadow-text">KAISHIROU</a></p>
-    <img src="8bfd600d7b9ea0e9fa6c3dc45f4cf2d8_t.jpeg" title="SAWADA" width="600" height="400">
-    <p class="shadow-text">１位.<a href="https://ja.wikipedia.org/wiki/%E8%A7%92%E5%88%88%E3%82%8A" class="shadow-text">つーさん</a></p>
-    <img src="ESKI2429.PNG" title="SAWADA" width="600" height="400">
+let myId=null, rendered=0, poll=null;
+
+document.getElementById('id-input').addEventListener('keydown', e=>{ if(e.key==='Enter') enter(); });
+function enter() {
+  const v = document.getElementById('id-input').value.trim();
+  if(!v||isNaN(v)||Number(v)<=0){ alert('数字を入力してください'); return; }
+  myId=v;
+  document.getElementById('my-badge').textContent=myId;
+  document.getElementById('login').classList.add('hide');
+  document.getElementById('chat').classList.remove('hide');
+  document.getElementById('msg-input').focus();
+  rendered=0; renderAll();
+  poll=setInterval(renderNew, 1000);
+}
+function leave() {
+  clearInterval(poll); myId=null; rendered=0;
+  document.getElementById('id-input').value='';
+  document.getElementById('chat').classList.add('hide');
+  document.getElementById('login').classList.remove('hide');
+}
+
+document.getElementById('msg-input').addEventListener('keydown', e=>{ if(e.key==='Enter') send(); });
+function send() {
+  const inp=document.getElementById('msg-input');
+  const text=inp.value.trim(); if(!text) return;
+  const msgs=loadMsgs(); msgs.push({id:myId,text,ts:Date.now()}); saveMsgs(msgs);
+  inp.value=''; renderNew();
+}
+
+function renderAll() {
+  const box=document.getElementById('messages'); box.innerHTML=''; rendered=0;
+  const msgs=loadMsgs();
+  if(msgs.length===0){ box.innerHTML='<p class="empty">まだメッセージはありません<br>最初のメッセージを送ってみよう！</p>'; return; }
+  msgs.forEach(m=>box.appendChild(buildMsg(m))); rendered=msgs.length; box.scrollTop=box.scrollHeight;
+}
+function renderNew() {
+  const msgs=loadMsgs(); if(msgs.length===rendered) return;
+  const box=document.getElementById('messages');
+  if(rendered===0) box.innerHTML='';
+  for(let i=rendered;i<msgs.length;i++) box.appendChild(buildMsg(msgs[i]));
+  rendered=msgs.length; box.scrollTop=box.scrollHeight;
+}
+function buildMsg(m) {
+  const mine=m.id===myId; const color=avatarColor(m.id);
+  const row=document.createElement('div'); row.className='msg'+(mine?' mine':'');
+  const av=document.createElement('div'); av.className='msg-avatar'; av.style.background=color; av.textContent=String(m.id).slice(0,4);
+  row.appendChild(av);
+  const body=document.createElement('div'); body.className='msg-body';
+  if(!mine){ const n=document.createElement('div'); n.className='msg-name'; n.textContent=m.id; body.appendChild(n); }
+  const b=document.createElement('div'); b.className='msg-bubble'; b.textContent=m.text; body.appendChild(b);
+  const t=document.createElement('div'); t.className='msg-time'; t.textContent=fmt(m.ts); body.appendChild(t);
+  row.appendChild(body); return row;
+}
+</script>
 
 </body>
-
-
-
-
-
-
-
-<style>
-body{background-color:rgb(0, 0, 0);}
-</style>
-
-<head>
-    <style>
-    body {opacity:1;/*透明度*/
-    background-image: url('mark_chuui.png') ;
-    background-repeat: repeat;  /* 繰り返し */
-    background-position: center;   /* 画像の位置を中央に */
-    background-size: 60px 60px;/* 画像が要素全体を覆うように */}
-    </style>
-</head>
-
-<style>
-    .text-box{position: relative;
-    font-size: 70px;
-    font-family: Arial, Helvetica, sans-serif;
-    font-weight: bold;
-    text-shadow: 3px 3px 6px rgb(0, 0, 0);
-    color: rgb(255, 196, 0);
-}
-.text-box::before{
-    content:" ";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgb(0, 0, 0);
-    z-index: -1;
-}
-</style>
-
-
-
-
-
-</div>
 </html>
-
-
