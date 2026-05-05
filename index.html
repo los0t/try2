@@ -20,7 +20,6 @@
     html, body { height: 100%; font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); }
 
 ```
-/* ── ログイン ── */
 #login { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
 #login.hide { display: none; }
 .login-box {
@@ -49,7 +48,6 @@
 }
 .enter-btn:hover { opacity: .85; }
 
-/* ── チャット ── */
 #chat { height: 100vh; display: flex; flex-direction: column; }
 #chat.hide { display: none; }
 
@@ -69,6 +67,12 @@
   font-size: 12px; cursor: pointer; font-family: inherit; transition: all .15s;
 }
 .back-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.status-bar {
+  text-align: center; font-size: 12px; padding: 5px;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  flex-shrink: 0; color: var(--muted);
+}
 
 #messages {
   flex: 1; overflow-y: auto; padding: 20px 16px;
@@ -116,7 +120,6 @@
   transition: opacity .15s, transform .1s;
 }
 .send-btn:hover { opacity: .85; transform: scale(1.08); }
-
 .empty { text-align: center; color: var(--muted); font-size: 13px; margin: auto; line-height: 2; }
 ```
 
@@ -139,74 +142,126 @@
     <span class="chat-title">としてログイン中</span>
     <button class="back-btn" onclick="leave()">← 戻る</button>
   </div>
-  <div id="messages"><p class="empty">まだメッセージはありません<br>最初のメッセージを送ってみよう！</p></div>
+  <div class="status-bar" id="status">接続中...</div>
+  <div id="messages">
+    <p class="empty">まだメッセージはありません<br>最初のメッセージを送ってみよう！</p>
+  </div>
   <div class="input-area">
     <input id="msg-input" type="text" placeholder="メッセージを入力..." autocomplete="off" maxlength="400" />
     <button class="send-btn" onclick="send()">➤</button>
   </div>
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, push, onChildAdded, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDl8UJ_ibhxGrtZ6vfyPit5S3_vACs371U",
+  authDomain: "onlychat-de190.firebaseapp.com",
+  databaseURL: "https://onlychat-de190-default-rtdb.firebaseio.com",
+  projectId: "onlychat-de190",
+  storageBucket: "onlychat-de190.firebasestorage.app",
+  messagingSenderId: "619416583908",
+  appId: "1:619416583908:web:ba5b8487baa5322fb2f6f1"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const msgsRef = ref(db, 'messages');
+
 const COLORS = ['#6c63ff','#ff6b9d','#43e97b','#f7971e','#4facfe','#f953c6','#43cbff','#fa709a'];
 function avatarColor(id) { return COLORS[String(id).split('').reduce((a,c)=>a+c.charCodeAt(0),0) % COLORS.length]; }
-function fmt(ts) { const d=new Date(ts); return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'); }
+function fmt(ts) {
+  const d = new Date(ts);
+  return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+}
 
-const KEY = 'numchat_msgs';
-function loadMsgs() { try { return JSON.parse(localStorage.getItem(KEY))||[]; } catch { return []; } }
-function saveMsgs(m) { localStorage.setItem(KEY, JSON.stringify(m)); }
+let myId = null;
+let listening = false;
 
-let myId=null, rendered=0, poll=null;
+document.getElementById('id-input').addEventListener('keydown', e => { if(e.key==='Enter') enter(); });
 
-document.getElementById('id-input').addEventListener('keydown', e=>{ if(e.key==='Enter') enter(); });
-function enter() {
+window.enter = function() {
   const v = document.getElementById('id-input').value.trim();
-  if(!v||isNaN(v)||Number(v)<=0){ alert('数字を入力してください'); return; }
-  myId=v;
-  document.getElementById('my-badge').textContent=myId;
+  if(!v || isNaN(v) || Number(v) <= 0) { alert('数字を入力してください'); return; }
+  myId = v;
+  document.getElementById('my-badge').textContent = myId;
   document.getElementById('login').classList.add('hide');
   document.getElementById('chat').classList.remove('hide');
   document.getElementById('msg-input').focus();
-  rendered=0; renderAll();
-  poll=setInterval(renderNew, 1000);
-}
-function leave() {
-  clearInterval(poll); myId=null; rendered=0;
-  document.getElementById('id-input').value='';
+  if (!listening) { listening = true; startListening(); }
+};
+
+window.leave = function() {
+  myId = null;
+  document.getElementById('id-input').value = '';
   document.getElementById('chat').classList.add('hide');
   document.getElementById('login').classList.remove('hide');
+};
+
+document.getElementById('msg-input').addEventListener('keydown', e => { if(e.key==='Enter') send(); });
+
+window.send = async function() {
+  const inp = document.getElementById('msg-input');
+  const text = inp.value.trim();
+  if(!text || !myId) return;
+  inp.value = '';
+  await push(msgsRef, { id: myId, text, ts: serverTimestamp() });
+};
+
+function startListening() {
+  const statusEl = document.getElementById('status');
+  statusEl.textContent = '✅ リアルタイム同期中';
+  statusEl.style.color = '#4ade80';
+
+  onChildAdded(msgsRef, (snapshot) => {
+    const m = snapshot.val();
+    if(!m) return;
+    const box = document.getElementById('messages');
+    const empty = box.querySelector('.empty');
+    if(empty) empty.remove();
+    box.appendChild(buildMsg(m));
+    box.scrollTop = box.scrollHeight;
+  });
 }
 
-document.getElementById('msg-input').addEventListener('keydown', e=>{ if(e.key==='Enter') send(); });
-function send() {
-  const inp=document.getElementById('msg-input');
-  const text=inp.value.trim(); if(!text) return;
-  const msgs=loadMsgs(); msgs.push({id:myId,text,ts:Date.now()}); saveMsgs(msgs);
-  inp.value=''; renderNew();
-}
-
-function renderAll() {
-  const box=document.getElementById('messages'); box.innerHTML=''; rendered=0;
-  const msgs=loadMsgs();
-  if(msgs.length===0){ box.innerHTML='<p class="empty">まだメッセージはありません<br>最初のメッセージを送ってみよう！</p>'; return; }
-  msgs.forEach(m=>box.appendChild(buildMsg(m))); rendered=msgs.length; box.scrollTop=box.scrollHeight;
-}
-function renderNew() {
-  const msgs=loadMsgs(); if(msgs.length===rendered) return;
-  const box=document.getElementById('messages');
-  if(rendered===0) box.innerHTML='';
-  for(let i=rendered;i<msgs.length;i++) box.appendChild(buildMsg(msgs[i]));
-  rendered=msgs.length; box.scrollTop=box.scrollHeight;
-}
 function buildMsg(m) {
-  const mine=m.id===myId; const color=avatarColor(m.id);
-  const row=document.createElement('div'); row.className='msg'+(mine?' mine':'');
-  const av=document.createElement('div'); av.className='msg-avatar'; av.style.background=color; av.textContent=String(m.id).slice(0,4);
+  const mine = m.id === myId;
+  const color = avatarColor(m.id);
+
+  const row = document.createElement('div');
+  row.className = 'msg' + (mine ? ' mine' : '');
+
+  const av = document.createElement('div');
+  av.className = 'msg-avatar';
+  av.style.background = color;
+  av.textContent = String(m.id).slice(0,4);
   row.appendChild(av);
-  const body=document.createElement('div'); body.className='msg-body';
-  if(!mine){ const n=document.createElement('div'); n.className='msg-name'; n.textContent=m.id; body.appendChild(n); }
-  const b=document.createElement('div'); b.className='msg-bubble'; b.textContent=m.text; body.appendChild(b);
-  const t=document.createElement('div'); t.className='msg-time'; t.textContent=fmt(m.ts); body.appendChild(t);
-  row.appendChild(body); return row;
+
+  const body = document.createElement('div');
+  body.className = 'msg-body';
+
+  if(!mine) {
+    const n = document.createElement('div');
+    n.className = 'msg-name';
+    n.textContent = m.id;
+    body.appendChild(n);
+  }
+
+  const b = document.createElement('div');
+  b.className = 'msg-bubble';
+  b.textContent = m.text;
+  body.appendChild(b);
+
+  const t = document.createElement('div');
+  t.className = 'msg-time';
+  t.textContent = m.ts ? fmt(m.ts) : '';
+  body.appendChild(t);
+
+  row.appendChild(body);
+  return row;
 }
 </script>
 
