@@ -13,305 +13,312 @@
       --card: #1e1e2a;
       --border: #2e2e42;
       --accent: #6c63ff;
-      --accent2: #4ade80;
+      --green: #4ade80;
       --text: #e4e4f0;
       --muted: #666680;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    html, body { height: 100%; overflow: hidden; font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); }
 
 ```
-/* ══ 画面管理 ══ */
-/* 全画面を position:fixed で重ねて、z-indexで切り替え */
-.screen {
-  position: fixed;
-  inset: 0;
+/* bodyは常に画面サイズ固定・スクロールなし */
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg); color: var(--text);
+}
+
+/* ══ 画面：1つだけ表示 ══ */
+.page {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   background: var(--bg);
-  display: flex;
+  display: none;          /* 基本は非表示 */
   flex-direction: column;
-  transform: translateX(100%);
-  transition: transform .25s ease;
-  z-index: 1;
+  overflow: hidden;
 }
-.screen.active {
-  transform: translateX(0);
-  z-index: 10;
-}
-/* ログインだけ中央寄せ */
-#login {
+.page.show { display: flex; } /* アクティブのみ表示 */
+
+/* ログインページだけ中央揃え */
+#pg-login {
   align-items: center;
   justify-content: center;
-  transform: translateX(0);
-  z-index: 20;
-}
-#login.gone {
-  transform: translateX(-100%);
-  z-index: 1;
 }
 
 /* ══ ログイン ══ */
 .login-box {
-  background: var(--card); border: 1px solid var(--border); border-radius: 20px;
-  padding: 48px 32px; width: min(320px, 90vw);
-  display: flex; flex-direction: column; gap: 20px; align-items: center;
-  box-shadow: 0 20px 60px rgba(0,0,0,.5);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 44px 28px;
+  width: min(310px, 88vw);
+  display: flex; flex-direction: column; gap: 18px; align-items: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,.6);
 }
-.logo { font-family: 'JetBrains Mono', monospace; font-size: 28px; color: var(--accent); }
-.login-box p { font-size: 13px; color: var(--muted); text-align: center; line-height: 1.7; }
+.logo { font-family: 'JetBrains Mono', monospace; font-size: 26px; color: var(--accent); }
+.login-desc { font-size: 13px; color: var(--muted); text-align: center; line-height: 1.7; }
 #id-input {
-  width: 100%; background: var(--surface);
-  border: 1.5px solid var(--border); border-radius: 12px;
-  color: var(--text); font-family: 'JetBrains Mono', monospace;
-  font-size: 32px; font-weight: 700; padding: 14px;
-  text-align: center; outline: none; letter-spacing: 4px;
-  transition: border-color .2s;
+  width: 100%;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 30px; font-weight: 700;
+  padding: 14px;
+  text-align: center; outline: none;
+  letter-spacing: 4px;
 }
 #id-input:focus { border-color: var(--accent); }
-#id-input::placeholder { font-size: 16px; letter-spacing: 1px; color: var(--muted); }
-.enter-btn {
+#id-input::placeholder { font-size: 15px; letter-spacing: 0; color: var(--muted); }
+.login-btn {
   width: 100%; background: var(--accent); color: #fff;
   border: none; border-radius: 12px; padding: 14px;
   font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit;
 }
 
-/* ══ ヘッダー ══ */
-.top-bar {
-  background: var(--surface); border-bottom: 1px solid var(--border);
-  padding: 0 16px; height: 52px;
-  display: flex; align-items: center; gap: 10px;
+/* ══ 共通ヘッダー ══ */
+.header {
+  height: 52px; flex-shrink: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 14px; gap: 10px;
+}
+.h-title { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: var(--accent); }
+.h-sub { font-size: 11px; color: var(--green); }
+.h-badge {
+  margin-left: auto;
+  background: var(--accent); color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px;
   flex-shrink: 0;
 }
-.top-bar-title { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: var(--accent); }
-.sync-badge { font-size: 11px; color: var(--accent2); }
-.back-btn {
+.h-back {
   background: none; border: 1px solid var(--border);
-  color: var(--muted); border-radius: 8px; padding: 6px 12px;
-  font-size: 13px; cursor: pointer; font-family: inherit;
+  color: var(--muted); border-radius: 8px;
+  padding: 6px 12px; font-size: 13px;
+  cursor: pointer; font-family: inherit; flex-shrink: 0;
 }
-.thread-header-title {
+.h-thread-title {
   flex: 1; font-size: 14px; font-weight: 700;
   overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
 }
-.user-badge {
-  margin-left: auto; background: var(--accent); color: #fff;
-  font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;
-  padding: 3px 10px; border-radius: 20px; flex-shrink: 0;
-}
 
 /* ══ スレッド一覧 ══ */
-.thread-list { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.list-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
 .thread-item {
   display: flex; align-items: center; gap: 12px;
-  padding: 14px 16px; border-bottom: 1px solid var(--border);
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
   cursor: pointer;
 }
 .thread-item:active { background: var(--card); }
-.thread-icon {
-  width: 40px; height: 40px; border-radius: 10px;
-  background: var(--accent); display: flex; align-items: center; justify-content: center;
+.t-icon {
+  width: 42px; height: 42px; border-radius: 10px;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
   font-size: 18px; flex-shrink: 0;
 }
-.thread-info { flex: 1; min-width: 0; }
-.thread-title { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.thread-meta { font-size: 11px; color: var(--muted); margin-top: 3px; }
-.thread-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
-.thread-count { font-size: 11px; color: var(--muted); }
-.thread-arrow { color: var(--muted); font-size: 16px; }
-.empty-msg { text-align: center; color: var(--muted); font-size: 13px; padding: 60px 20px; line-height: 2; }
+.t-info { flex: 1; min-width: 0; }
+.t-title { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.t-meta { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.t-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+.t-count { font-size: 11px; color: var(--muted); }
+.t-arrow { color: var(--muted); font-size: 16px; }
+.list-empty { text-align: center; color: var(--muted); font-size: 13px; padding: 60px 20px; line-height: 2.2; }
 
 /* ＋ボタン */
 .fab {
-  position: fixed; bottom: 28px; right: 20px; z-index: 15;
+  position: absolute; bottom: 24px; right: 20px;
   width: 56px; height: 56px; border-radius: 50%;
   background: var(--accent); color: #fff; border: none;
   font-size: 28px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 20px rgba(108,99,255,.5);
-  transition: opacity .2s;
+  box-shadow: 0 4px 24px rgba(108,99,255,.5);
 }
-.fab.hidden { opacity: 0; pointer-events: none; }
 
 /* ══ モーダル ══ */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,.75);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 100; padding: 20px;
-  opacity: 0; pointer-events: none; transition: opacity .2s;
+.overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,.75);
+  display: none;
+  align-items: center; justify-content: center;
+  padding: 20px; z-index: 99;
 }
-.modal-overlay.open { opacity: 1; pointer-events: all; }
+.overlay.show { display: flex; }
 .modal {
   background: var(--card); border: 1px solid var(--border);
-  border-radius: 18px; padding: 24px; width: 100%; max-width: 340px;
-  display: flex; flex-direction: column; gap: 16px;
-  transform: translateY(20px); transition: transform .2s;
+  border-radius: 18px; padding: 24px;
+  width: 100%; max-width: 320px;
+  display: flex; flex-direction: column; gap: 14px;
 }
-.modal-overlay.open .modal { transform: translateY(0); }
-.modal h2 { font-size: 16px; font-weight: 700; }
-.modal-input {
+.modal h3 { font-size: 15px; }
+.modal-inp {
   width: 100%; background: var(--surface);
   border: 1.5px solid var(--border); border-radius: 10px;
   color: var(--text); font-family: inherit; font-size: 15px;
   padding: 12px 14px; outline: none;
 }
-.modal-input:focus { border-color: var(--accent); }
-.modal-input::placeholder { color: var(--muted); }
-.modal-actions { display: flex; gap: 10px; }
-.modal-cancel {
+.modal-inp:focus { border-color: var(--accent); }
+.modal-inp::placeholder { color: var(--muted); }
+.modal-btns { display: flex; gap: 10px; }
+.m-cancel {
   flex: 1; background: none; border: 1px solid var(--border);
   color: var(--muted); border-radius: 10px; padding: 12px;
   font-size: 14px; cursor: pointer; font-family: inherit;
 }
-.modal-submit {
+.m-ok {
   flex: 2; background: var(--accent); color: #fff;
   border: none; border-radius: 10px; padding: 12px;
   font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit;
 }
 
 /* ══ スレッド内 ══ */
-.posts-area { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 8px 0; }
-
-/* 返信バナー */
-.reply-banner {
-  display: none;
-  background: #1a1a2e; border-bottom: 1px solid var(--accent);
-  padding: 10px 16px; flex-shrink: 0;
-  align-items: flex-start; gap: 10px;
+.posts-scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 0;
 }
-.reply-banner.show { display: flex; }
-.reply-banner-body { flex: 1; min-width: 0; }
-.reply-banner-label { font-size: 11px; color: var(--accent); margin-bottom: 3px; }
-.reply-banner-preview {
-  font-size: 13px; color: var(--muted);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.reply-banner-cancel {
-  background: none; border: none; color: var(--muted);
-  font-size: 22px; cursor: pointer; padding: 0; flex-shrink: 0;
-  line-height: 1;
-}
-
-/* 投稿 */
 .post {
-  padding: 12px 16px; border-bottom: 1px solid var(--border);
-  cursor: pointer; transition: background .1s;
-  user-select: none;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
 }
-.post:active { background: rgba(108,99,255,.08); }
-.post.replying { background: rgba(108,99,255,.12); }
-
+.post:active, .post.replying { background: rgba(108,99,255,.1); }
 .post-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-.post-avatar {
+.p-av {
   width: 26px; height: 26px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700;
   color: #fff; flex-shrink: 0;
 }
-.post-id { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--accent); }
-.post-num { font-size: 11px; color: var(--muted); }
-.post-time { font-size: 11px; color: var(--muted); margin-left: auto; }
-
-.quote-block {
+.p-id { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--accent); }
+.p-num { font-size: 11px; color: var(--muted); }
+.p-time { font-size: 11px; color: var(--muted); margin-left: auto; }
+.quote {
   background: #13131c; border-left: 3px solid var(--accent);
-  border-radius: 0 6px 6px 0; padding: 8px 10px; margin-bottom: 8px;
+  border-radius: 0 6px 6px 0; padding: 7px 10px; margin-bottom: 7px;
 }
-.quote-user { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); margin-bottom: 3px; }
-.quote-text { font-size: 12px; color: var(--muted); line-height: 1.5; word-break: break-word; }
+.q-user { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); margin-bottom: 2px; }
+.q-text { font-size: 12px; color: var(--muted); line-height: 1.5; word-break: break-word; }
+.post-body { font-size: 14px; line-height: 1.7; word-break: break-word; white-space: pre-wrap; }
+.posts-empty { text-align: center; color: var(--muted); font-size: 13px; padding: 50px 20px; line-height: 2.2; }
 
-.post-text { font-size: 14px; line-height: 1.7; word-break: break-word; white-space: pre-wrap; }
-
-/* 入力エリア */
-.post-input-area {
-  border-top: 1px solid var(--border); background: var(--surface); flex-shrink: 0;
+/* 返信バナー */
+.reply-bar {
+  display: none;
+  background: #1a1a2e;
+  border-top: 1px solid var(--accent);
+  padding: 8px 14px;
+  align-items: center; gap: 10px;
+  flex-shrink: 0;
 }
-.input-row { display: flex; gap: 10px; align-items: flex-end; padding: 10px 16px 14px; }
+.reply-bar.show { display: flex; }
+.rb-body { flex: 1; min-width: 0; }
+.rb-label { font-size: 11px; color: var(--accent); margin-bottom: 2px; }
+.rb-preview { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rb-cancel { background: none; border: none; color: var(--muted); font-size: 22px; cursor: pointer; padding: 0 2px; flex-shrink: 0; }
+
+/* 入力ボックス */
+.input-bar {
+  display: flex; align-items: flex-end; gap: 10px;
+  padding: 10px 14px 14px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
 #post-input {
-  flex: 1; background: var(--card);
-  border: 1.5px solid var(--border); border-radius: 14px;
-  color: var(--text); font-family: inherit; font-size: 14px;
-  padding: 10px 14px; outline: none; resize: none;
-  max-height: 100px; min-height: 42px; line-height: 1.5;
-  transition: border-color .2s;
+  flex: 1;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  color: var(--text);
+  font-family: inherit; font-size: 15px;
+  padding: 10px 14px;
+  outline: none; resize: none;
+  min-height: 42px; max-height: 100px;
+  line-height: 1.5;
+  -webkit-appearance: none;
 }
 #post-input:focus { border-color: var(--accent); }
 #post-input::placeholder { color: var(--muted); }
-.post-send-btn {
-  width: 42px; height: 42px; border-radius: 50%;
+.send-btn {
+  width: 44px; height: 44px; border-radius: 50%;
   background: var(--accent); color: #fff; border: none;
-  font-size: 16px; cursor: pointer; flex-shrink: 0;
+  font-size: 18px; cursor: pointer; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
 }
-
-::-webkit-scrollbar { width: 3px; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 ```
 
   </style>
 </head>
 <body>
 
-<!-- ══ ログイン ══ -->
+<!-- ページ1：ログイン -->
 
-<div id="login" class="screen">
+<div id="pg-login" class="page show">
   <div class="login-box">
     <div class="logo">さわch</div>
-    <p>数字を入力してください<br>それがあなたのユーザー名になります</p>
-    <input id="id-input" type="number" placeholder="例: 1234" autocomplete="off" inputmode="numeric" />
-    <button class="enter-btn" onclick="doLogin()">入室する →</button>
+    <p class="login-desc">数字を入力してください<br>それがあなたのユーザー名になります</p>
+    <input id="id-input" type="number" inputmode="numeric" placeholder="例: 1234" autocomplete="off" />
+    <button class="login-btn" id="login-btn">入室する →</button>
   </div>
 </div>
 
-<!-- ══ スレッド一覧 ══ -->
+<!-- ページ2：スレッド一覧 -->
 
-<div id="thread-list-screen" class="screen">
-  <div class="top-bar">
-    <div class="top-bar-title">さわch</div>
-    <div class="sync-badge" id="sync-label"></div>
-    <div class="user-badge" id="tl-badge"></div>
+<div id="pg-list" class="page">
+  <div class="header">
+    <div class="h-title">さわch</div>
+    <div class="h-sub" id="sync-txt"></div>
+    <div class="h-badge" id="badge-list"></div>
   </div>
-  <div class="thread-list" id="thread-list">
-    <div class="empty-msg">スレッドがありません<br>右下の ＋ から作成できます</div>
+  <div class="list-scroll" id="thread-list">
+    <div class="list-empty">スレッドがありません<br>右下の ＋ から作成できます</div>
   </div>
-</div>
-
-<!-- ══ スレッド内 ══ -->
-
-<div id="thread-screen" class="screen">
-  <div class="top-bar">
-    <button class="back-btn" onclick="backToList()">← 一覧</button>
-    <div class="thread-header-title" id="thread-screen-title"></div>
-    <div class="user-badge" id="ts-badge"></div>
-  </div>
-  <div class="posts-area" id="posts-area"></div>
-  <div class="post-input-area">
-    <!-- 返信バナー -->
-    <div class="reply-banner" id="reply-banner">
-      <div class="reply-banner-body">
-        <div class="reply-banner-label">↩ 返信中</div>
-        <div class="reply-banner-preview" id="reply-preview"></div>
+  <button class="fab" id="fab">＋</button>
+  <!-- モーダル（このページ内に閉じ込める） -->
+  <div class="overlay" id="modal-overlay">
+    <div class="modal">
+      <h3>📝 新しいスレッドを作る</h3>
+      <input class="modal-inp" id="thread-title-inp" placeholder="タイトルを入力..." maxlength="60" inputmode="text" />
+      <div class="modal-btns">
+        <button class="m-cancel" id="modal-cancel">キャンセル</button>
+        <button class="m-ok" id="modal-ok">作成する</button>
       </div>
-      <button class="reply-banner-cancel" onclick="cancelReply()">✕</button>
-    </div>
-    <div class="input-row">
-      <textarea id="post-input" placeholder="タップして投稿に返信、または直接入力..." rows="1" maxlength="1000"></textarea>
-      <button class="post-send-btn" onclick="submitPost()">➤</button>
     </div>
   </div>
 </div>
 
-<!-- ＋ボタン（スレッド一覧専用） -->
+<!-- ページ3：スレッド内 -->
 
-<button class="fab hidden" id="fab-btn" onclick="openModal()">＋</button>
-
-<!-- ══ スレッド作成モーダル ══ -->
-
-<div class="modal-overlay" id="modal" onclick="onModalBg(event)">
-  <div class="modal">
-    <h2>📝 新しいスレッドを作る</h2>
-    <input class="modal-input" id="thread-title-input" placeholder="スレッドタイトルを入力..." maxlength="60" />
-    <div class="modal-actions">
-      <button class="modal-cancel" onclick="closeModal()">キャンセル</button>
-      <button class="modal-submit" onclick="createThread()">作成する</button>
+<div id="pg-thread" class="page">
+  <div class="header">
+    <button class="h-back" id="btn-back">← 一覧</button>
+    <div class="h-thread-title" id="thread-title-disp"></div>
+    <div class="h-badge" id="badge-thread"></div>
+  </div>
+  <div class="posts-scroll" id="posts-area">
+    <div class="posts-empty">まだ投稿はありません<br>下の入力欄から投稿できます</div>
+  </div>
+  <div class="reply-bar" id="reply-bar">
+    <div class="rb-body">
+      <div class="rb-label">↩ 返信中</div>
+      <div class="rb-preview" id="reply-preview-txt"></div>
     </div>
+    <button class="rb-cancel" id="reply-cancel-btn">✕</button>
+  </div>
+  <div class="input-bar">
+    <textarea id="post-input" placeholder="投稿する… (投稿をタップで返信)" rows="1"></textarea>
+    <button class="send-btn" id="send-btn">➤</button>
   </div>
 </div>
 
@@ -320,7 +327,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getDatabase, ref, push, onValue, remove, get, update }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const firebaseConfig = {
+// ── Firebase
+const fb = initializeApp({
   apiKey: "AIzaSyDl8UJ_ibhxGrtZ6vfyPit5S3_vACs371U",
   authDomain: "onlychat-de190.firebaseapp.com",
   databaseURL: "https://onlychat-de190-default-rtdb.firebaseio.com",
@@ -328,257 +336,247 @@ const firebaseConfig = {
   storageBucket: "onlychat-de190.firebasestorage.app",
   messagingSenderId: "619416583908",
   appId: "1:619416583908:web:ba5b8487baa5322fb2f6f1"
-};
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+});
+const db = getDatabase(fb);
 
 // ── 状態
 let myId = null;
-let currentThreadId = null;
-let replyTarget = null; // { pid, userId, text }
-let currentPostData = {}; // pid→post のキャッシュ
+let curThread = null;   // { id, title }
+let replyTo = null;     // { pid, userId, text }
+let postsCache = {};
+
+// ── ページ切り替え（1つだけ表示）
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('show'));
+  document.getElementById(id).classList.add('show');
+}
 
 // ── カラー
 const COLORS = ['#6c63ff','#ff6b9d','#43e97b','#f7971e','#4facfe','#f953c6','#43cbff','#fa709a'];
-function avatarColor(id) {
-  return COLORS[String(id).split('').reduce((a,c)=>a+c.charCodeAt(0),0) % COLORS.length];
-}
+function col(id) { return COLORS[String(id).split('').reduce((a,c)=>a+c.charCodeAt(0),0)%COLORS.length]; }
 function fmt(ts) {
   if(!ts) return '';
   const d = new Date(ts);
-  return `${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+  return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 }
-function esc(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// ── 画面切り替え
-function showScreen(id) {
-  // ログインを消す
-  document.getElementById('login').classList.add('gone');
-  // fab表示制御
-  document.getElementById('fab-btn').classList.toggle('hidden', id !== 'thread-list-screen');
-  // 各画面
-  ['thread-list-screen','thread-screen'].forEach(sid => {
-    const el = document.getElementById(sid);
-    if(sid === id) el.classList.add('active');
-    else el.classList.remove('active');
-  });
-}
+// ══════════════════════════════
+//  ログイン
+// ══════════════════════════════
+document.getElementById('id-input').addEventListener('keydown', e => { if(e.key==='Enter') login(); });
+document.getElementById('login-btn').addEventListener('click', login);
 
-// ── ログイン
-document.getElementById('id-input').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
-window.doLogin = function() {
+function login() {
   const v = document.getElementById('id-input').value.trim();
-  if(!v || isNaN(v) || Number(v) <= 0) { alert('数字を入力してください'); return; }
+  if(!v || isNaN(v) || Number(v)<=0) { alert('数字を入力してください'); return; }
   myId = v;
-  document.getElementById('tl-badge').textContent = myId;
-  document.getElementById('ts-badge').textContent = myId;
-  showScreen('thread-list-screen');
-  startThreadList();
-};
+  document.getElementById('badge-list').textContent = myId;
+  document.getElementById('badge-thread').textContent = myId;
+  showPage('pg-list');
+  initThreadList();
+}
 
-// ── スレッド一覧監視
-function startThreadList() {
-  document.getElementById('sync-label').textContent = '✅ 同期中';
-  onValue(ref(db, 'threads'), (snapshot) => {
-    const data = snapshot.val() || {};
+// ══════════════════════════════
+//  スレッド一覧
+// ══════════════════════════════
+function initThreadList() {
+  document.getElementById('sync-txt').textContent = '✅ 同期中';
+  onValue(ref(db,'threads'), snap => {
+    const data = snap.val() || {};
     const now = Date.now();
-    const oneWeek = 7 * 24 * 60 * 60 * 1000;
-    Object.entries(data).forEach(([tid, t]) => {
-      if(now - (t.lastActivity || t.createdAt || 0) > oneWeek) {
-        remove(ref(db, `threads/${tid}`));
-        remove(ref(db, `posts/${tid}`));
+    // 1週間経過スレを削除
+    Object.entries(data).forEach(([tid,t]) => {
+      if(now - (t.lastActivity||t.createdAt||0) > 7*24*60*60*1000) {
+        remove(ref(db,`threads/${tid}`));
+        remove(ref(db,`posts/${tid}`));
+        delete data[tid];
       }
     });
-    renderThreadList(data);
+    renderList(data);
   });
 }
 
-function renderThreadList(data) {
-  const list = document.getElementById('thread-list');
-  const entries = Object.entries(data).sort((a,b) => (b[1].lastActivity||0) - (a[1].lastActivity||0));
-  if(entries.length === 0) {
-    list.innerHTML = '<div class="empty-msg">スレッドがありません<br>右下の ＋ から作成できます</div>';
+function renderList(data) {
+  const el = document.getElementById('thread-list');
+  const entries = Object.entries(data).sort((a,b)=>(b[1].lastActivity||0)-(a[1].lastActivity||0));
+  if(!entries.length) {
+    el.innerHTML = '<div class="list-empty">スレッドがありません<br>右下の ＋ から作成できます</div>';
     return;
   }
-  list.innerHTML = '';
+  el.innerHTML = '';
   const icons = ['💬','📢','🔥','✨','📝','🎯','💡','🌟'];
-  entries.forEach(([tid, t]) => {
-    const div = document.createElement('div');
-    div.className = 'thread-item';
-    div.addEventListener('click', () => openThread(tid, t.title));
-    const ic = icons[String(tid).split('').reduce((a,c)=>a+c.charCodeAt(0),0) % icons.length];
-    div.innerHTML = `
-      <div class="thread-icon">${ic}</div>
-      <div class="thread-info">
-        <div class="thread-title">${esc(t.title)}</div>
-        <div class="thread-meta">${fmt(t.createdAt)} ・ by ${esc(String(t.createdBy||''))}</div>
+  entries.forEach(([tid,t]) => {
+    const d = document.createElement('div');
+    d.className = 'thread-item';
+    const ic = icons[String(tid).split('').reduce((a,c)=>a+c.charCodeAt(0),0)%icons.length];
+    d.innerHTML = `
+      <div class="t-icon">${ic}</div>
+      <div class="t-info">
+        <div class="t-title">${esc(t.title)}</div>
+        <div class="t-meta">${fmt(t.createdAt)} · by ${esc(String(t.createdBy||''))}</div>
       </div>
-      <div class="thread-right">
-        <div class="thread-count">${t.postCount||0}件</div>
-        <div class="thread-arrow">›</div>
-      </div>
-    `;
-    list.appendChild(div);
+      <div class="t-right">
+        <div class="t-count">${t.postCount||0}件</div>
+        <div class="t-arrow">›</div>
+      </div>`;
+    d.addEventListener('click', () => enterThread(tid, t.title));
+    el.appendChild(d);
   });
 }
 
-// ── モーダル
-window.openModal = function() {
-  document.getElementById('modal').classList.add('open');
-  setTimeout(() => document.getElementById('thread-title-input').focus(), 150);
-};
-window.closeModal = function() {
-  document.getElementById('modal').classList.remove('open');
-  document.getElementById('thread-title-input').value = '';
-};
-window.onModalBg = function(e) {
-  if(e.target === document.getElementById('modal')) closeModal();
-};
-document.getElementById('thread-title-input').addEventListener('keydown', e => {
-  if(e.key==='Enter') createThread();
+// ── ＋ボタン・モーダル
+document.getElementById('fab').addEventListener('click', () => {
+  document.getElementById('modal-overlay').classList.add('show');
+  setTimeout(()=>document.getElementById('thread-title-inp').focus(),100);
 });
-window.createThread = async function() {
-  const title = document.getElementById('thread-title-input').value.trim();
-  if(!title) { alert('タイトルを入力してください'); return; }
-  const now = Date.now();
-  await push(ref(db, 'threads'), { title, createdBy: myId, createdAt: now, lastActivity: now, postCount: 0 });
-  closeModal();
-};
+document.getElementById('modal-cancel').addEventListener('click', closeModal);
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if(e.target === document.getElementById('modal-overlay')) closeModal();
+});
+document.getElementById('thread-title-inp').addEventListener('keydown', e => { if(e.key==='Enter') doCreate(); });
+document.getElementById('modal-ok').addEventListener('click', doCreate);
 
-// ── スレッドを開く
-function openThread(tid, title) {
-  currentThreadId = tid;
-  currentPostData = {};
-  replyTarget = null;
-  document.getElementById('thread-screen-title').textContent = title;
-  document.getElementById('reply-banner').classList.remove('show');
-  document.getElementById('post-input').value = '';
-  document.getElementById('posts-area').innerHTML = '<div class="empty-msg">読み込み中...</div>';
-  showScreen('thread-screen');
-  loadPosts(tid);
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('show');
+  document.getElementById('thread-title-inp').value = '';
+}
+async function doCreate() {
+  const title = document.getElementById('thread-title-inp').value.trim();
+  if(!title){ alert('タイトルを入力してください'); return; }
+  const now = Date.now();
+  await push(ref(db,'threads'),{title,createdBy:myId,createdAt:now,lastActivity:now,postCount:0});
+  closeModal();
 }
 
-window.backToList = function() {
-  currentThreadId = null;
-  replyTarget = null;
-  showScreen('thread-list-screen');
-};
+// ══════════════════════════════
+//  スレッド内
+// ══════════════════════════════
+function enterThread(tid, title) {
+  curThread = { id: tid, title };
+  postsCache = {};
+  replyTo = null;
+  document.getElementById('thread-title-disp').textContent = title;
+  document.getElementById('reply-bar').classList.remove('show');
+  document.getElementById('post-input').value = '';
+  document.getElementById('posts-area').innerHTML = '<div class="posts-empty">読み込み中...</div>';
+  showPage('pg-thread');
+  listenPosts(tid);
+}
 
-// ── 投稿一覧
-function loadPosts(tid) {
-  onValue(ref(db, `posts/${tid}`), (snapshot) => {
-    if(currentThreadId !== tid) return;
-    const data = snapshot.val() || {};
-    currentPostData = data;
-    const area = document.getElementById('posts-area');
-    const entries = Object.entries(data).sort((a,b) => (a[1].ts||0) - (b[1].ts||0));
-    const wasBottom = area.scrollHeight - area.scrollTop - area.clientHeight < 100;
+document.getElementById('btn-back').addEventListener('click', () => {
+  curThread = null; replyTo = null;
+  showPage('pg-list');
+});
 
-    if(entries.length === 0) {
-      area.innerHTML = '<div class="empty-msg">まだ投稿はありません<br>タップして返信するか、直接入力してください</div>';
-      return;
-    }
-    area.innerHTML = '';
-    entries.forEach(([pid, post], idx) => {
-      area.appendChild(buildPost(pid, post, idx+1, data));
-    });
-    if(wasBottom) area.scrollTop = area.scrollHeight;
-
-    // 返信中の投稿をハイライト
-    if(replyTarget) highlightPost(replyTarget.pid);
+function listenPosts(tid) {
+  onValue(ref(db,`posts/${tid}`), snap => {
+    if(!curThread || curThread.id !== tid) return;
+    postsCache = snap.val() || {};
+    renderPosts(postsCache);
   });
 }
 
-function buildPost(pid, post, num, allPosts) {
+function renderPosts(data) {
+  const area = document.getElementById('posts-area');
+  const entries = Object.entries(data).sort((a,b)=>(a[1].ts||0)-(b[1].ts||0));
+  const atBottom = area.scrollHeight - area.scrollTop - area.clientHeight < 100;
+
+  if(!entries.length) {
+    area.innerHTML = '<div class="posts-empty">まだ投稿はありません<br>下の入力欄から投稿できます</div>';
+    return;
+  }
+  area.innerHTML = '';
+  entries.forEach(([pid,post],i) => {
+    const div = buildPost(pid,post,i+1,data);
+    area.appendChild(div);
+  });
+  if(atBottom) area.scrollTop = area.scrollHeight;
+  if(replyTo) { const el=document.getElementById('p-'+replyTo.pid); if(el) el.classList.add('replying'); }
+}
+
+function buildPost(pid,post,num,all) {
   const div = document.createElement('div');
   div.className = 'post';
-  div.id = `post-${pid}`;
-  const color = avatarColor(post.userId);
+  div.id = 'p-'+pid;
+  const c = col(post.userId);
+  const hdr = document.createElement('div');
+  hdr.className = 'post-header';
+  hdr.innerHTML = `
+    <div class="p-av" style="background:${c}">${String(post.userId).slice(0,3)}</div>
+    <span class="p-id">${esc(post.userId)}</span>
+    <span class="p-num">No.${num}</span>
+    <span class="p-time">${fmt(post.ts)}</span>`;
+  div.appendChild(hdr);
 
-  // タップで返信
-  div.addEventListener('click', () => setReply(pid, post.userId, post.text));
-
-  const header = document.createElement('div');
-  header.className = 'post-header';
-  header.innerHTML = `
-    <div class="post-avatar" style="background:${color}">${String(post.userId).slice(0,3)}</div>
-    <span class="post-id">${esc(post.userId)}</span>
-    <span class="post-num">No.${num}</span>
-    <span class="post-time">${fmt(post.ts)}</span>
-  `;
-  div.appendChild(header);
-
-  // 引用
-  if(post.replyTo && allPosts[post.replyTo]) {
-    const orig = allPosts[post.replyTo];
-    const preview = orig.text.length > 60 ? orig.text.slice(0,60)+'…' : orig.text;
+  if(post.replyTo && all[post.replyTo]) {
+    const o = all[post.replyTo];
+    const prev = o.text.length>60 ? o.text.slice(0,60)+'…' : o.text;
     const q = document.createElement('div');
-    q.className = 'quote-block';
-    q.innerHTML = `<div class="quote-user">${esc(orig.userId)} より</div><div class="quote-text">${esc(preview)}</div>`;
+    q.className = 'quote';
+    q.innerHTML = `<div class="q-user">${esc(o.userId)} より</div><div class="q-text">${esc(prev)}</div>`;
     div.appendChild(q);
   }
 
   const body = document.createElement('div');
-  body.className = 'post-text';
+  body.className = 'post-body';
   body.textContent = post.text;
   div.appendChild(body);
+
+  // タップで返信
+  div.addEventListener('click', () => setReply(pid, post.userId, post.text));
   return div;
 }
 
-function highlightPost(pid) {
-  document.querySelectorAll('.post').forEach(el => el.classList.remove('replying'));
-  const target = document.getElementById(`post-${pid}`);
-  if(target) target.classList.add('replying');
-}
-
-// ── 返信セット（投稿タップで呼ばれる）
-window.setReply = function(pid, userId, text) {
-  replyTarget = { pid, userId, text };
-  const preview = `${userId}：${text.length > 40 ? text.slice(0,40)+'…' : text}`;
-  document.getElementById('reply-preview').textContent = preview;
-  document.getElementById('reply-banner').classList.add('show');
-  highlightPost(pid);
+// ── 返信
+function setReply(pid, userId, text) {
+  replyTo = { pid, userId, text };
+  const prev = `${userId}：${text.length>40?text.slice(0,40)+'…':text}`;
+  document.getElementById('reply-preview-txt').textContent = prev;
+  document.getElementById('reply-bar').classList.add('show');
+  document.querySelectorAll('.post').forEach(e=>e.classList.remove('replying'));
+  const t = document.getElementById('p-'+pid); if(t) t.classList.add('replying');
   document.getElementById('post-input').focus();
-};
-
-window.cancelReply = function() {
-  replyTarget = null;
-  document.getElementById('reply-banner').classList.remove('show');
-  document.querySelectorAll('.post').forEach(el => el.classList.remove('replying'));
-};
+}
+document.getElementById('reply-cancel-btn').addEventListener('click', () => {
+  replyTo = null;
+  document.getElementById('reply-bar').classList.remove('show');
+  document.querySelectorAll('.post').forEach(e=>e.classList.remove('replying'));
+});
 
 // ── 送信
 document.getElementById('post-input').addEventListener('keydown', e => {
-  if(e.key==='Enter' && !e.shiftKey) { e.preventDefault(); submitPost(); }
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); doPost(); }
 });
-document.getElementById('post-input').addEventListener('input', function() {
-  this.style.height = 'auto';
-  this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+document.getElementById('post-input').addEventListener('input', function(){
+  this.style.height='auto';
+  this.style.height=Math.min(this.scrollHeight,100)+'px';
 });
+document.getElementById('send-btn').addEventListener('click', doPost);
 
-window.submitPost = async function() {
+async function doPost() {
   const inp = document.getElementById('post-input');
   const text = inp.value.trim();
-  if(!text || !currentThreadId) return;
-  inp.value = ''; inp.style.height = 'auto';
+  if(!text||!curThread) return;
+  inp.value=''; inp.style.height='auto';
 
   const now = Date.now();
-  const postData = { userId: myId, text, ts: now };
-  if(replyTarget) postData.replyTo = replyTarget.pid;
+  const data = { userId:myId, text, ts:now };
+  if(replyTo) data.replyTo = replyTo.pid;
 
-  await push(ref(db, `posts/${currentThreadId}`), postData);
+  await push(ref(db,`posts/${curThread.id}`), data);
 
-  const snap = await get(ref(db, `threads/${currentThreadId}`));
+  const snap = await get(ref(db,`threads/${curThread.id}`));
   if(snap.exists()) {
-    await update(ref(db, `threads/${currentThreadId}`), {
+    await update(ref(db,`threads/${curThread.id}`),{
       lastActivity: now,
-      postCount: (snap.val().postCount || 0) + 1
+      postCount: (snap.val().postCount||0)+1
     });
   }
-  cancelReply();
-};
+  replyTo = null;
+  document.getElementById('reply-bar').classList.remove('show');
+  document.querySelectorAll('.post').forEach(e=>e.classList.remove('replying'));
+}
 </script>
 
 </body>
