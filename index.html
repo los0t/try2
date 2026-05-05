@@ -3,7 +3,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>さわch</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet" />
   <style>
@@ -18,20 +18,41 @@
       --muted: #666680;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    html, body { height: 100%; font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); }
+    html, body { height: 100%; overflow: hidden; font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); }
 
 ```
-/* ══ 画面切り替え ══ */
-.screen { display: none; }
-.screen.active { display: flex; flex-direction: column; }
-#login.active { min-height: 100vh; align-items: center; justify-content: center; }
-#thread-list-screen.active,
-#thread-screen.active { height: 100vh; }
+/* ══ 画面管理 ══ */
+/* 全画面を position:fixed で重ねて、z-indexで切り替え */
+.screen {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform .25s ease;
+  z-index: 1;
+}
+.screen.active {
+  transform: translateX(0);
+  z-index: 10;
+}
+/* ログインだけ中央寄せ */
+#login {
+  align-items: center;
+  justify-content: center;
+  transform: translateX(0);
+  z-index: 20;
+}
+#login.gone {
+  transform: translateX(-100%);
+  z-index: 1;
+}
 
 /* ══ ログイン ══ */
 .login-box {
   background: var(--card); border: 1px solid var(--border); border-radius: 20px;
-  padding: 48px 32px; width: 320px;
+  padding: 48px 32px; width: min(320px, 90vw);
   display: flex; flex-direction: column; gap: 20px; align-items: center;
   box-shadow: 0 20px 60px rgba(0,0,0,.5);
 }
@@ -50,8 +71,7 @@
 .enter-btn {
   width: 100%; background: var(--accent); color: #fff;
   border: none; border-radius: 12px; padding: 14px;
-  font-size: 16px; font-weight: 700; cursor: pointer;
-  font-family: inherit;
+  font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit;
 }
 
 /* ══ ヘッダー ══ */
@@ -62,11 +82,15 @@
   flex-shrink: 0;
 }
 .top-bar-title { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: var(--accent); }
-.top-bar-sub { font-size: 11px; color: var(--accent2); }
+.sync-badge { font-size: 11px; color: var(--accent2); }
 .back-btn {
   background: none; border: 1px solid var(--border);
   color: var(--muted); border-radius: 8px; padding: 6px 12px;
   font-size: 13px; cursor: pointer; font-family: inherit;
+}
+.thread-header-title {
+  flex: 1; font-size: 14px; font-weight: 700;
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
 }
 .user-badge {
   margin-left: auto; background: var(--accent); color: #fff;
@@ -79,7 +103,7 @@
 .thread-item {
   display: flex; align-items: center; gap: 12px;
   padding: 14px 16px; border-bottom: 1px solid var(--border);
-  cursor: pointer; transition: background .1s;
+  cursor: pointer;
 }
 .thread-item:active { background: var(--card); }
 .thread-icon {
@@ -97,29 +121,31 @@
 
 /* ＋ボタン */
 .fab {
-  position: fixed; bottom: 28px; right: 20px;
+  position: fixed; bottom: 28px; right: 20px; z-index: 15;
   width: 56px; height: 56px; border-radius: 50%;
   background: var(--accent); color: #fff; border: none;
   font-size: 28px; cursor: pointer;
-  display: none;
-  align-items: center; justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   box-shadow: 0 4px 20px rgba(108,99,255,.5);
+  transition: opacity .2s;
 }
-.fab.visible { display: flex; }
+.fab.hidden { opacity: 0; pointer-events: none; }
 
 /* ══ モーダル ══ */
 .modal-overlay {
-  display: none;
   position: fixed; inset: 0; background: rgba(0,0,0,.75);
-  align-items: center; justify-content: center;
-  z-index: 200; padding: 20px;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100; padding: 20px;
+  opacity: 0; pointer-events: none; transition: opacity .2s;
 }
-.modal-overlay.open { display: flex; }
+.modal-overlay.open { opacity: 1; pointer-events: all; }
 .modal {
   background: var(--card); border: 1px solid var(--border);
   border-radius: 18px; padding: 24px; width: 100%; max-width: 340px;
   display: flex; flex-direction: column; gap: 16px;
+  transform: translateY(20px); transition: transform .2s;
 }
+.modal-overlay.open .modal { transform: translateY(0); }
 .modal h2 { font-size: 16px; font-weight: 700; }
 .modal-input {
   width: 100%; background: var(--surface);
@@ -143,8 +169,37 @@
 
 /* ══ スレッド内 ══ */
 .posts-area { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 8px 0; }
-.post { padding: 12px 16px; border-bottom: 1px solid var(--border); }
-.post-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+
+/* 返信バナー */
+.reply-banner {
+  display: none;
+  background: #1a1a2e; border-bottom: 1px solid var(--accent);
+  padding: 10px 16px; flex-shrink: 0;
+  align-items: flex-start; gap: 10px;
+}
+.reply-banner.show { display: flex; }
+.reply-banner-body { flex: 1; min-width: 0; }
+.reply-banner-label { font-size: 11px; color: var(--accent); margin-bottom: 3px; }
+.reply-banner-preview {
+  font-size: 13px; color: var(--muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.reply-banner-cancel {
+  background: none; border: none; color: var(--muted);
+  font-size: 22px; cursor: pointer; padding: 0; flex-shrink: 0;
+  line-height: 1;
+}
+
+/* 投稿 */
+.post {
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background .1s;
+  user-select: none;
+}
+.post:active { background: rgba(108,99,255,.08); }
+.post.replying { background: rgba(108,99,255,.12); }
+
+.post-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
 .post-avatar {
   width: 26px; height: 26px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
@@ -154,28 +209,20 @@
 .post-id { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--accent); }
 .post-num { font-size: 11px; color: var(--muted); }
 .post-time { font-size: 11px; color: var(--muted); margin-left: auto; }
-.reply-btn {
-  background: none; border: 1px solid var(--border); color: var(--muted);
-  font-size: 11px; cursor: pointer; padding: 3px 8px;
-  border-radius: 4px; font-family: inherit;
-}
-.reply-btn:active { background: var(--border); }
+
 .quote-block {
   background: #13131c; border-left: 3px solid var(--accent);
   border-radius: 0 6px 6px 0; padding: 8px 10px; margin-bottom: 8px;
 }
 .quote-user { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); margin-bottom: 3px; }
 .quote-text { font-size: 12px; color: var(--muted); line-height: 1.5; word-break: break-word; }
+
 .post-text { font-size: 14px; line-height: 1.7; word-break: break-word; white-space: pre-wrap; }
 
 /* 入力エリア */
-.post-input-area { border-top: 1px solid var(--border); background: var(--surface); flex-shrink: 0; }
-.reply-indicator {
-  display: none; align-items: center; gap: 8px;
-  padding: 8px 16px 0; font-size: 12px; color: var(--accent);
+.post-input-area {
+  border-top: 1px solid var(--border); background: var(--surface); flex-shrink: 0;
 }
-.reply-indicator.show { display: flex; }
-.reply-cancel { margin-left: auto; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; padding: 0 4px; }
 .input-row { display: flex; gap: 10px; align-items: flex-end; padding: 10px 16px 14px; }
 #post-input {
   flex: 1; background: var(--card);
@@ -183,6 +230,7 @@
   color: var(--text); font-family: inherit; font-size: 14px;
   padding: 10px 14px; outline: none; resize: none;
   max-height: 100px; min-height: 42px; line-height: 1.5;
+  transition: border-color .2s;
 }
 #post-input:focus { border-color: var(--accent); }
 #post-input::placeholder { color: var(--muted); }
@@ -201,9 +249,9 @@
 </head>
 <body>
 
-<!-- ログイン -->
+<!-- ══ ログイン ══ -->
 
-<div id="login" class="screen active">
+<div id="login" class="screen">
   <div class="login-box">
     <div class="logo">さわch</div>
     <p>数字を入力してください<br>それがあなたのユーザー名になります</p>
@@ -212,46 +260,51 @@
   </div>
 </div>
 
-<!-- スレッド一覧 -->
+<!-- ══ スレッド一覧 ══ -->
 
 <div id="thread-list-screen" class="screen">
   <div class="top-bar">
     <div class="top-bar-title">さわch</div>
-    <div class="top-bar-sub" id="sync-label">接続中...</div>
+    <div class="sync-badge" id="sync-label"></div>
     <div class="user-badge" id="tl-badge"></div>
   </div>
   <div class="thread-list" id="thread-list">
     <div class="empty-msg">スレッドがありません<br>右下の ＋ から作成できます</div>
   </div>
-  <button class="fab" id="fab-btn" onclick="openModal()">＋</button>
 </div>
 
-<!-- スレッド内 -->
+<!-- ══ スレッド内 ══ -->
 
 <div id="thread-screen" class="screen">
   <div class="top-bar">
     <button class="back-btn" onclick="backToList()">← 一覧</button>
-    <div style="flex:1;font-size:14px;font-weight:700;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;" id="thread-screen-title"></div>
+    <div class="thread-header-title" id="thread-screen-title"></div>
     <div class="user-badge" id="ts-badge"></div>
   </div>
-  <div class="posts-area" id="posts-area">
-    <div class="empty-msg">まだ投稿はありません</div>
-  </div>
+  <div class="posts-area" id="posts-area"></div>
   <div class="post-input-area">
-    <div class="reply-indicator" id="reply-indicator">
-      <span id="reply-label"></span>
-      <button class="reply-cancel" onclick="cancelReply()">✕</button>
+    <!-- 返信バナー -->
+    <div class="reply-banner" id="reply-banner">
+      <div class="reply-banner-body">
+        <div class="reply-banner-label">↩ 返信中</div>
+        <div class="reply-banner-preview" id="reply-preview"></div>
+      </div>
+      <button class="reply-banner-cancel" onclick="cancelReply()">✕</button>
     </div>
     <div class="input-row">
-      <textarea id="post-input" placeholder="つぶやく..." rows="1" maxlength="1000"></textarea>
+      <textarea id="post-input" placeholder="タップして投稿に返信、または直接入力..." rows="1" maxlength="1000"></textarea>
       <button class="post-send-btn" onclick="submitPost()">➤</button>
     </div>
   </div>
 </div>
 
-<!-- スレッド作成モーダル -->
+<!-- ＋ボタン（スレッド一覧専用） -->
 
-<div class="modal-overlay" id="modal">
+<button class="fab hidden" id="fab-btn" onclick="openModal()">＋</button>
+
+<!-- ══ スレッド作成モーダル ══ -->
+
+<div class="modal-overlay" id="modal" onclick="onModalBg(event)">
   <div class="modal">
     <h2>📝 新しいスレッドを作る</h2>
     <input class="modal-input" id="thread-title-input" placeholder="スレッドタイトルを入力..." maxlength="60" />
@@ -264,7 +317,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, push, onValue, remove, get, update, serverTimestamp }
+import { getDatabase, ref, push, onValue, remove, get, update }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -282,26 +335,35 @@ const db = getDatabase(app);
 // ── 状態
 let myId = null;
 let currentThreadId = null;
-let replyTarget = null;
+let replyTarget = null; // { pid, userId, text }
+let currentPostData = {}; // pid→post のキャッシュ
 
 // ── カラー
 const COLORS = ['#6c63ff','#ff6b9d','#43e97b','#f7971e','#4facfe','#f953c6','#43cbff','#fa709a'];
 function avatarColor(id) {
   return COLORS[String(id).split('').reduce((a,c)=>a+c.charCodeAt(0),0) % COLORS.length];
 }
-
-// ── 時刻
 function fmt(ts) {
   if(!ts) return '';
   const d = new Date(ts);
   return `${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
 }
+function esc(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
 // ── 画面切り替え
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.getElementById('fab-btn').classList.toggle('visible', id === 'thread-list-screen');
+  // ログインを消す
+  document.getElementById('login').classList.add('gone');
+  // fab表示制御
+  document.getElementById('fab-btn').classList.toggle('hidden', id !== 'thread-list-screen');
+  // 各画面
+  ['thread-list-screen','thread-screen'].forEach(sid => {
+    const el = document.getElementById(sid);
+    if(sid === id) el.classList.add('active');
+    else el.classList.remove('active');
+  });
 }
 
 // ── ログイン
@@ -316,7 +378,7 @@ window.doLogin = function() {
   startThreadList();
 };
 
-// ── スレッド一覧
+// ── スレッド一覧監視
 function startThreadList() {
   document.getElementById('sync-label').textContent = '✅ 同期中';
   onValue(ref(db, 'threads'), (snapshot) => {
@@ -345,13 +407,13 @@ function renderThreadList(data) {
   entries.forEach(([tid, t]) => {
     const div = document.createElement('div');
     div.className = 'thread-item';
-    div.onclick = () => openThread(tid, t.title);
+    div.addEventListener('click', () => openThread(tid, t.title));
     const ic = icons[String(tid).split('').reduce((a,c)=>a+c.charCodeAt(0),0) % icons.length];
     div.innerHTML = `
       <div class="thread-icon">${ic}</div>
       <div class="thread-info">
         <div class="thread-title">${esc(t.title)}</div>
-        <div class="thread-meta">${fmt(t.createdAt)} ・ by ${esc(t.createdBy)}</div>
+        <div class="thread-meta">${fmt(t.createdAt)} ・ by ${esc(String(t.createdBy||''))}</div>
       </div>
       <div class="thread-right">
         <div class="thread-count">${t.postCount||0}件</div>
@@ -365,15 +427,15 @@ function renderThreadList(data) {
 // ── モーダル
 window.openModal = function() {
   document.getElementById('modal').classList.add('open');
-  setTimeout(() => document.getElementById('thread-title-input').focus(), 100);
+  setTimeout(() => document.getElementById('thread-title-input').focus(), 150);
 };
 window.closeModal = function() {
   document.getElementById('modal').classList.remove('open');
   document.getElementById('thread-title-input').value = '';
 };
-document.getElementById('modal').addEventListener('click', function(e) {
-  if(e.target === this) closeModal();
-});
+window.onModalBg = function(e) {
+  if(e.target === document.getElementById('modal')) closeModal();
+};
 document.getElementById('thread-title-input').addEventListener('keydown', e => {
   if(e.key==='Enter') createThread();
 });
@@ -388,10 +450,12 @@ window.createThread = async function() {
 // ── スレッドを開く
 function openThread(tid, title) {
   currentThreadId = tid;
+  currentPostData = {};
   replyTarget = null;
   document.getElementById('thread-screen-title').textContent = title;
-  document.getElementById('reply-indicator').classList.remove('show');
+  document.getElementById('reply-banner').classList.remove('show');
   document.getElementById('post-input').value = '';
+  document.getElementById('posts-area').innerHTML = '<div class="empty-msg">読み込み中...</div>';
   showScreen('thread-screen');
   loadPosts(tid);
 }
@@ -407,12 +471,13 @@ function loadPosts(tid) {
   onValue(ref(db, `posts/${tid}`), (snapshot) => {
     if(currentThreadId !== tid) return;
     const data = snapshot.val() || {};
+    currentPostData = data;
     const area = document.getElementById('posts-area');
     const entries = Object.entries(data).sort((a,b) => (a[1].ts||0) - (b[1].ts||0));
     const wasBottom = area.scrollHeight - area.scrollTop - area.clientHeight < 100;
 
     if(entries.length === 0) {
-      area.innerHTML = '<div class="empty-msg">まだ投稿はありません</div>';
+      area.innerHTML = '<div class="empty-msg">まだ投稿はありません<br>タップして返信するか、直接入力してください</div>';
       return;
     }
     area.innerHTML = '';
@@ -420,6 +485,9 @@ function loadPosts(tid) {
       area.appendChild(buildPost(pid, post, idx+1, data));
     });
     if(wasBottom) area.scrollTop = area.scrollHeight;
+
+    // 返信中の投稿をハイライト
+    if(replyTarget) highlightPost(replyTarget.pid);
   });
 }
 
@@ -429,6 +497,9 @@ function buildPost(pid, post, num, allPosts) {
   div.id = `post-${pid}`;
   const color = avatarColor(post.userId);
 
+  // タップで返信
+  div.addEventListener('click', () => setReply(pid, post.userId, post.text));
+
   const header = document.createElement('div');
   header.className = 'post-header';
   header.innerHTML = `
@@ -436,10 +507,10 @@ function buildPost(pid, post, num, allPosts) {
     <span class="post-id">${esc(post.userId)}</span>
     <span class="post-num">No.${num}</span>
     <span class="post-time">${fmt(post.ts)}</span>
-    <button class="reply-btn" onclick="setReply('${pid}',${JSON.stringify(post.userId)},${JSON.stringify(post.text)})">返信</button>
   `;
   div.appendChild(header);
 
+  // 引用
   if(post.replyTo && allPosts[post.replyTo]) {
     const orig = allPosts[post.replyTo];
     const preview = orig.text.length > 60 ? orig.text.slice(0,60)+'…' : orig.text;
@@ -456,17 +527,26 @@ function buildPost(pid, post, num, allPosts) {
   return div;
 }
 
-// ── 返信
+function highlightPost(pid) {
+  document.querySelectorAll('.post').forEach(el => el.classList.remove('replying'));
+  const target = document.getElementById(`post-${pid}`);
+  if(target) target.classList.add('replying');
+}
+
+// ── 返信セット（投稿タップで呼ばれる）
 window.setReply = function(pid, userId, text) {
   replyTarget = { pid, userId, text };
-  const preview = text.length > 30 ? text.slice(0,30)+'…' : text;
-  document.getElementById('reply-label').textContent = `↩ ${userId}「${preview}」`;
-  document.getElementById('reply-indicator').classList.add('show');
+  const preview = `${userId}：${text.length > 40 ? text.slice(0,40)+'…' : text}`;
+  document.getElementById('reply-preview').textContent = preview;
+  document.getElementById('reply-banner').classList.add('show');
+  highlightPost(pid);
   document.getElementById('post-input').focus();
 };
+
 window.cancelReply = function() {
   replyTarget = null;
-  document.getElementById('reply-indicator').classList.remove('show');
+  document.getElementById('reply-banner').classList.remove('show');
+  document.querySelectorAll('.post').forEach(el => el.classList.remove('replying'));
 };
 
 // ── 送信
@@ -477,6 +557,7 @@ document.getElementById('post-input').addEventListener('input', function() {
   this.style.height = 'auto';
   this.style.height = Math.min(this.scrollHeight, 100) + 'px';
 });
+
 window.submitPost = async function() {
   const inp = document.getElementById('post-input');
   const text = inp.value.trim();
@@ -498,10 +579,6 @@ window.submitPost = async function() {
   }
   cancelReply();
 };
-
-function esc(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
 </script>
 
 </body>
