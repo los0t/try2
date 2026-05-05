@@ -13,15 +13,21 @@
       --card: #1e1e2a;
       --border: #2e2e42;
       --accent: #6c63ff;
+      --accent2: #4ade80;
       --text: #e4e4f0;
       --muted: #666680;
+      --reply-bg: #13131c;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); }
 
 ```
+/* ══ ユーティリティ ══ */
+.hide { display: none !important; }
+.screen { min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ══ ログイン画面 ══ */
 #login { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-#login.hide { display: none; }
 .login-box {
   background: var(--card); border: 1px solid var(--border); border-radius: 20px;
   padding: 48px 40px; width: 340px;
@@ -48,115 +54,283 @@
 }
 .enter-btn:hover { opacity: .85; }
 
-#chat { height: 100vh; display: flex; flex-direction: column; }
-#chat.hide { display: none; }
-
-.chat-header {
+/* ══ 共通ヘッダー ══ */
+.top-bar {
   background: var(--surface); border-bottom: 1px solid var(--border);
-  padding: 14px 20px; display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+  padding: 0 16px; height: 52px;
+  display: flex; align-items: center; gap: 12px;
+  flex-shrink: 0; position: sticky; top: 0; z-index: 50;
 }
-.my-badge {
-  background: var(--accent); color: #fff;
-  font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
-  padding: 4px 12px; border-radius: 20px;
+.top-bar-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 20px; font-weight: 700; color: var(--accent);
 }
-.chat-title { font-size: 14px; color: var(--muted); }
+.top-bar-sub { font-size: 13px; color: var(--muted); }
 .back-btn {
-  margin-left: auto; background: none; border: 1px solid var(--border);
+  background: none; border: 1px solid var(--border);
   color: var(--muted); border-radius: 8px; padding: 5px 12px;
   font-size: 12px; cursor: pointer; font-family: inherit; transition: all .15s;
 }
 .back-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-.status-bar {
-  text-align: center; font-size: 12px; padding: 5px;
-  background: var(--surface); border-bottom: 1px solid var(--border);
-  flex-shrink: 0; color: var(--muted);
+.user-badge {
+  margin-left: auto;
+  background: var(--accent); color: #fff;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px;
+}
+.status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent2); flex-shrink: 0;
 }
 
-#messages {
-  flex: 1; overflow-y: auto; padding: 20px 16px;
-  display: flex; flex-direction: column; gap: 10px;
+/* ══ スレッド一覧 ══ */
+#thread-list-screen { display: flex; flex-direction: column; height: 100vh; }
+.thread-list { flex: 1; overflow-y: auto; }
+.thread-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background .15s;
 }
-#messages::-webkit-scrollbar { width: 4px; }
-#messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.thread-item:hover { background: var(--card); }
+.thread-item:active { background: var(--border); }
+.thread-icon {
+  width: 42px; height: 42px; border-radius: 10px;
+  background: var(--accent); display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.thread-info { flex: 1; min-width: 0; }
+.thread-title {
+  font-size: 14px; font-weight: 700;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.thread-meta { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.thread-count {
+  font-size: 11px; color: var(--muted); flex-shrink: 0;
+  background: var(--card); border: 1px solid var(--border);
+  padding: 2px 8px; border-radius: 10px;
+}
+.thread-arrow { color: var(--muted); font-size: 14px; flex-shrink: 0; }
+.empty-threads {
+  text-align: center; color: var(--muted); font-size: 13px;
+  padding: 60px 20px; line-height: 2;
+}
 
-.msg { display: flex; gap: 10px; align-items: flex-end; animation: pop .15s ease; }
-.msg.mine { flex-direction: row-reverse; }
-@keyframes pop { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
-
-.msg-avatar {
-  width: 36px; height: 36px; border-radius: 50%;
+/* ＋ボタン */
+.fab {
+  position: fixed; bottom: 28px; right: 24px;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--accent); color: #fff; border: none;
+  font-size: 28px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
-  flex-shrink: 0; color: #fff;
+  box-shadow: 0 4px 20px rgba(108,99,255,.5);
+  transition: transform .15s, opacity .15s;
+  z-index: 40;
 }
-.msg-body { max-width: 70%; display: flex; flex-direction: column; gap: 3px; }
-.msg.mine .msg-body { align-items: flex-end; }
-.msg-name { font-size: 11px; color: var(--muted); }
-.msg-bubble {
-  padding: 10px 14px; border-radius: 18px;
-  font-size: 14px; line-height: 1.6; word-break: break-word;
-}
-.msg:not(.mine) .msg-bubble { background: var(--card); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
-.msg.mine .msg-bubble { background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
-.msg-time { font-size: 10px; color: var(--muted); }
+.fab:hover { transform: scale(1.08); opacity: .9; }
+.fab:active { transform: scale(.95); }
 
-.input-area {
-  padding: 14px 16px; border-top: 1px solid var(--border);
-  background: var(--surface); display: flex; gap: 10px; align-items: center; flex-shrink: 0;
+/* ══ モーダル（スレッド作成） ══ */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.7);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100; padding: 20px;
 }
-#msg-input {
-  flex: 1; background: var(--card); border: 1.5px solid var(--border); border-radius: 24px;
-  color: var(--text); font-family: inherit; font-size: 14px; padding: 11px 18px;
-  outline: none; transition: border-color .2s;
+.modal {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 18px; padding: 28px 24px; width: 100%; max-width: 360px;
+  display: flex; flex-direction: column; gap: 16px;
 }
-#msg-input:focus { border-color: var(--accent); }
-#msg-input::placeholder { color: var(--muted); }
-.send-btn {
-  width: 44px; height: 44px; border-radius: 50%; background: var(--accent);
-  color: #fff; border: none; font-size: 18px; cursor: pointer; flex-shrink: 0;
+.modal h2 { font-size: 16px; font-weight: 700; }
+.modal-input {
+  width: 100%; background: var(--surface);
+  border: 1.5px solid var(--border); border-radius: 10px;
+  color: var(--text); font-family: inherit; font-size: 15px;
+  padding: 12px 14px; outline: none; transition: border-color .2s;
+}
+.modal-input:focus { border-color: var(--accent); }
+.modal-input::placeholder { color: var(--muted); }
+.modal-actions { display: flex; gap: 10px; }
+.modal-cancel {
+  flex: 1; background: none; border: 1px solid var(--border);
+  color: var(--muted); border-radius: 10px; padding: 11px;
+  font-size: 14px; cursor: pointer; font-family: inherit;
+}
+.modal-submit {
+  flex: 2; background: var(--accent); color: #fff;
+  border: none; border-radius: 10px; padding: 11px;
+  font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit;
+  transition: opacity .15s;
+}
+.modal-submit:hover { opacity: .85; }
+
+/* ══ スレッド内画面 ══ */
+#thread-screen { display: flex; flex-direction: column; height: 100vh; }
+.posts-area { flex: 1; overflow-y: auto; padding: 12px 0; }
+
+/* 投稿 */
+.post {
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  transition: background .1s;
+}
+.post:hover { background: rgba(255,255,255,.02); }
+.post-header {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+}
+.post-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700;
+  color: #fff; flex-shrink: 0;
+}
+.post-id {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; font-weight: 700; color: var(--accent);
+}
+.post-num { font-size: 11px; color: var(--muted); }
+.post-time { font-size: 11px; color: var(--muted); margin-left: auto; }
+.reply-btn {
+  background: none; border: none; color: var(--muted);
+  font-size: 11px; cursor: pointer; padding: 2px 6px;
+  border-radius: 4px; transition: all .15s; font-family: inherit;
+}
+.reply-btn:hover { background: var(--border); color: var(--text); }
+
+/* 引用 */
+.quote-block {
+  background: var(--reply-bg); border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0; padding: 8px 10px; margin-bottom: 8px;
+  font-size: 12px; color: var(--muted); line-height: 1.5;
+}
+.quote-block .quote-user {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--accent); margin-bottom: 3px;
+}
+.quote-text { word-break: break-word; }
+
+.post-text {
+  font-size: 14px; line-height: 1.7; word-break: break-word;
+  white-space: pre-wrap;
+}
+
+/* 入力エリア */
+.post-input-area {
+  border-top: 1px solid var(--border);
+  background: var(--surface); flex-shrink: 0;
+}
+.reply-indicator {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px 0; font-size: 12px; color: var(--accent);
+}
+.reply-cancel {
+  margin-left: auto; background: none; border: none;
+  color: var(--muted); cursor: pointer; font-size: 16px; padding: 0 4px;
+}
+.input-row {
+  display: flex; gap: 10px; align-items: flex-end;
+  padding: 10px 16px 14px;
+}
+#post-input {
+  flex: 1; background: var(--card);
+  border: 1.5px solid var(--border); border-radius: 14px;
+  color: var(--text); font-family: inherit; font-size: 14px;
+  padding: 10px 14px; outline: none; resize: none;
+  transition: border-color .2s; max-height: 120px; min-height: 42px;
+  line-height: 1.5;
+}
+#post-input:focus { border-color: var(--accent); }
+#post-input::placeholder { color: var(--muted); }
+.post-send-btn {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: var(--accent); color: #fff; border: none;
+  font-size: 16px; cursor: pointer; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
   transition: opacity .15s, transform .1s;
 }
-.send-btn:hover { opacity: .85; transform: scale(1.08); }
-.empty { text-align: center; color: var(--muted); font-size: 13px; margin: auto; line-height: 2; }
+.post-send-btn:hover { opacity: .85; transform: scale(1.06); }
+
+/* スクロールバー */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* アニメーション */
+@keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+.post { animation: fadeUp .15s ease; }
 ```
 
   </style>
 </head>
 <body>
 
+<!-- ══ ログイン ══ -->
+
 <div id="login">
   <div class="login-box">
     <div class="logo">さわch</div>
     <p>数字を入力してください<br>それがあなたのユーザー名になります</p>
     <input id="id-input" type="number" placeholder="例: 1234" autocomplete="off" />
-    <button class="enter-btn" onclick="enter()">入室する →</button>
+    <button class="enter-btn" onclick="doLogin()">入室する →</button>
   </div>
 </div>
 
-<div id="chat" class="hide">
-  <div class="chat-header">
-    <div class="my-badge" id="my-badge"></div>
-    <span class="chat-title">としてログイン中</span>
-    <button class="back-btn" onclick="leave()">← 戻る</button>
+<!-- ══ スレッド一覧 ══ -->
+
+<div id="thread-list-screen" class="hide">
+  <div class="top-bar">
+    <div class="top-bar-title">さわch</div>
+    <div class="status-dot" id="sync-dot"></div>
+    <div class="top-bar-sub" id="sync-label">接続中</div>
+    <div class="user-badge" id="tl-badge"></div>
   </div>
-  <div class="status-bar" id="status">接続中...</div>
-  <div id="messages">
-    <p class="empty">まだメッセージはありません<br>最初のメッセージを送ってみよう！</p>
+  <div class="thread-list" id="thread-list">
+    <div class="empty-threads">スレッドがありません<br>右下の ＋ から作成できます</div>
   </div>
-  <div class="input-area">
-    <input id="msg-input" type="text" placeholder="メッセージを入力..." autocomplete="off" maxlength="400" />
-    <button class="send-btn" onclick="send()">➤</button>
+  <button class="fab" onclick="openNewThreadModal()">＋</button>
+</div>
+
+<!-- ══ スレッド内 ══ -->
+
+<div id="thread-screen" class="hide">
+  <div class="top-bar">
+    <button class="back-btn" onclick="backToList()">← 一覧</button>
+    <div class="top-bar-title" id="thread-screen-title" style="font-size:15px;max-width:180px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;"></div>
+    <div class="user-badge" id="ts-badge"></div>
+  </div>
+  <div class="posts-area" id="posts-area">
+    <div class="empty-threads">まだ投稿はありません<br>最初の投稿をしてみよう！</div>
+  </div>
+  <div class="post-input-area">
+    <div class="reply-indicator hide" id="reply-indicator">
+      <span id="reply-label"></span>
+      <button class="reply-cancel" onclick="cancelReply()">✕</button>
+    </div>
+    <div class="input-row">
+      <textarea id="post-input" placeholder="つぶやく..." rows="1" maxlength="1000"></textarea>
+      <button class="post-send-btn" onclick="submitPost()">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ スレッド作成モーダル ══ -->
+
+<div class="modal-overlay hide" id="new-thread-modal">
+  <div class="modal">
+    <h2>📝 新しいスレッドを作る</h2>
+    <input class="modal-input" id="thread-title-input" placeholder="スレッドタイトルを入力..." maxlength="60" />
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeNewThreadModal()">キャンセル</button>
+      <button class="modal-submit" onclick="createThread()">作成する</button>
+    </div>
   </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded, serverTimestamp }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import {
+  getDatabase, ref, push, onValue, remove, query,
+  orderByChild, serverTimestamp, get
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
+// ── Firebase設定
 const firebaseConfig = {
   apiKey: "AIzaSyDl8UJ_ibhxGrtZ6vfyPit5S3_vACs371U",
   authDomain: "onlychat-de190.firebaseapp.com",
@@ -166,102 +340,265 @@ const firebaseConfig = {
   messagingSenderId: "619416583908",
   appId: "1:619416583908:web:ba5b8487baa5322fb2f6f1"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const msgsRef = ref(db, 'messages');
 
+// ── 状態
+let myId = null;
+let currentThreadId = null;
+let currentThreadTitle = null;
+let replyTarget = null; // { postId, userId, text }
+let postUnsubscribe = null;
+
+// ── カラー
 const COLORS = ['#6c63ff','#ff6b9d','#43e97b','#f7971e','#4facfe','#f953c6','#43cbff','#fa709a'];
-function avatarColor(id) { return COLORS[String(id).split('').reduce((a,c)=>a+c.charCodeAt(0),0) % COLORS.length]; }
-function fmt(ts) {
-  const d = new Date(ts);
-  return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+function avatarColor(id) {
+  return COLORS[String(id).split('').reduce((a,c)=>a+c.charCodeAt(0),0) % COLORS.length];
 }
 
-let myId = null;
-let listening = false;
+// ── 時刻フォーマット
+function fmt(ts) {
+  if(!ts) return '';
+  const d = new Date(ts);
+  const mm = (d.getMonth()+1).toString().padStart(2,'0');
+  const dd = d.getDate().toString().padStart(2,'0');
+  const hh = d.getHours().toString().padStart(2,'0');
+  const min = d.getMinutes().toString().padStart(2,'0');
+  return `${mm}/${dd} ${hh}:${min}`;
+}
 
-document.getElementById('id-input').addEventListener('keydown', e => { if(e.key==='Enter') enter(); });
-
-window.enter = function() {
+// ── ログイン
+document.getElementById('id-input').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+window.doLogin = function() {
   const v = document.getElementById('id-input').value.trim();
   if(!v || isNaN(v) || Number(v) <= 0) { alert('数字を入力してください'); return; }
   myId = v;
-  document.getElementById('my-badge').textContent = myId;
+  document.getElementById('tl-badge').textContent = myId;
+  document.getElementById('ts-badge').textContent = myId;
   document.getElementById('login').classList.add('hide');
-  document.getElementById('chat').classList.remove('hide');
-  document.getElementById('msg-input').focus();
-  if (!listening) { listening = true; startListening(); }
+  document.getElementById('thread-list-screen').classList.remove('hide');
+  startThreadList();
 };
 
-window.leave = function() {
-  myId = null;
-  document.getElementById('id-input').value = '';
-  document.getElementById('chat').classList.add('hide');
-  document.getElementById('login').classList.remove('hide');
-};
+// ── スレッド一覧監視
+function startThreadList() {
+  const syncDot = document.getElementById('sync-dot');
+  const syncLabel = document.getElementById('sync-label');
+  syncDot.style.background = '#4ade80';
+  syncLabel.textContent = 'リアルタイム同期中';
 
-document.getElementById('msg-input').addEventListener('keydown', e => { if(e.key==='Enter') send(); });
+  const threadsRef = ref(db, 'threads');
+  onValue(threadsRef, (snapshot) => {
+    const data = snapshot.val() || {};
+    const now = Date.now();
+    const oneWeek = 7 * 24 * 60 * 60 * 1000;
 
-window.send = async function() {
-  const inp = document.getElementById('msg-input');
-  const text = inp.value.trim();
-  if(!text || !myId) return;
-  inp.value = '';
-  await push(msgsRef, { id: myId, text, ts: serverTimestamp() });
-};
+    // 1週間投稿なしのスレを削除
+    Object.entries(data).forEach(([tid, thread]) => {
+      const lastActivity = thread.lastActivity || thread.createdAt || 0;
+      if(now - lastActivity > oneWeek) {
+        remove(ref(db, `threads/${tid}`));
+        remove(ref(db, `posts/${tid}`));
+      }
+    });
 
-function startListening() {
-  const statusEl = document.getElementById('status');
-  statusEl.textContent = '✅ リアルタイム同期中';
-  statusEl.style.color = '#4ade80';
-
-  onChildAdded(msgsRef, (snapshot) => {
-    const m = snapshot.val();
-    if(!m) return;
-    const box = document.getElementById('messages');
-    const empty = box.querySelector('.empty');
-    if(empty) empty.remove();
-    box.appendChild(buildMsg(m));
-    box.scrollTop = box.scrollHeight;
+    renderThreadList(data);
   });
 }
 
-function buildMsg(m) {
-  const mine = m.id === myId;
-  const color = avatarColor(m.id);
+function renderThreadList(data) {
+  const list = document.getElementById('thread-list');
+  const entries = Object.entries(data).sort((a,b) => (b[1].lastActivity||0) - (a[1].lastActivity||0));
 
-  const row = document.createElement('div');
-  row.className = 'msg' + (mine ? ' mine' : '');
-
-  const av = document.createElement('div');
-  av.className = 'msg-avatar';
-  av.style.background = color;
-  av.textContent = String(m.id).slice(0,4);
-  row.appendChild(av);
-
-  const body = document.createElement('div');
-  body.className = 'msg-body';
-
-  if(!mine) {
-    const n = document.createElement('div');
-    n.className = 'msg-name';
-    n.textContent = m.id;
-    body.appendChild(n);
+  if(entries.length === 0) {
+    list.innerHTML = '<div class="empty-threads">スレッドがありません<br>右下の ＋ から作成できます</div>';
+    return;
   }
 
-  const b = document.createElement('div');
-  b.className = 'msg-bubble';
-  b.textContent = m.text;
-  body.appendChild(b);
+  list.innerHTML = '';
+  entries.forEach(([tid, thread]) => {
+    const div = document.createElement('div');
+    div.className = 'thread-item';
+    div.onclick = () => openThread(tid, thread.title);
 
-  const t = document.createElement('div');
-  t.className = 'msg-time';
-  t.textContent = m.ts ? fmt(m.ts) : '';
-  body.appendChild(t);
+    const icons = ['💬','📢','🔥','✨','📝','🎯','💡','🌟'];
+    const iconIdx = String(tid).split('').reduce((a,c)=>a+c.charCodeAt(0),0) % icons.length;
 
-  row.appendChild(body);
-  return row;
+    div.innerHTML = `
+      <div class="thread-icon">${icons[iconIdx]}</div>
+      <div class="thread-info">
+        <div class="thread-title">${esc(thread.title)}</div>
+        <div class="thread-meta">作成: ${fmt(thread.createdAt)} ・ by ${esc(thread.createdBy)}</div>
+      </div>
+      <div class="thread-count">${thread.postCount||0}件</div>
+      <div class="thread-arrow">›</div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+// ── スレッド作成モーダル
+window.openNewThreadModal = function() {
+  document.getElementById('new-thread-modal').classList.remove('hide');
+  document.getElementById('thread-title-input').focus();
+};
+window.closeNewThreadModal = function() {
+  document.getElementById('new-thread-modal').classList.add('hide');
+  document.getElementById('thread-title-input').value = '';
+};
+document.getElementById('thread-title-input').addEventListener('keydown', e => {
+  if(e.key==='Enter') createThread();
+});
+window.createThread = async function() {
+  const title = document.getElementById('thread-title-input').value.trim();
+  if(!title) { alert('タイトルを入力してください'); return; }
+  const now = Date.now();
+  await push(ref(db, 'threads'), {
+    title,
+    createdBy: myId,
+    createdAt: now,
+    lastActivity: now,
+    postCount: 0
+  });
+  closeNewThreadModal();
+};
+
+// ── スレッドを開く
+window.openThread = function(tid, title) {
+  currentThreadId = tid;
+  currentThreadTitle = title;
+  replyTarget = null;
+  document.getElementById('thread-screen-title').textContent = title;
+  document.getElementById('reply-indicator').classList.add('hide');
+  document.getElementById('thread-list-screen').classList.add('hide');
+  document.getElementById('thread-screen').classList.remove('hide');
+  loadPosts(tid);
+};
+
+window.backToList = function() {
+  currentThreadId = null;
+  replyTarget = null;
+  document.getElementById('thread-screen').classList.add('hide');
+  document.getElementById('thread-list-screen').classList.remove('hide');
+  document.getElementById('posts-area').innerHTML = '<div class="empty-threads">まだ投稿はありません<br>最初の投稿をしてみよう！</div>';
+};
+
+// ── 投稿一覧
+function loadPosts(tid) {
+  const postsRef = ref(db, `posts/${tid}`);
+  onValue(postsRef, (snapshot) => {
+    const data = snapshot.val() || {};
+    const area = document.getElementById('posts-area');
+    const entries = Object.entries(data).sort((a,b) => (a[1].ts||0) - (b[1].ts||0));
+
+    if(entries.length === 0) {
+      area.innerHTML = '<div class="empty-threads">まだ投稿はありません<br>最初の投稿をしてみよう！</div>';
+      return;
+    }
+
+    const wasBottom = area.scrollHeight - area.scrollTop - area.clientHeight < 80;
+    area.innerHTML = '';
+
+    entries.forEach(([pid, post], idx) => {
+      area.appendChild(buildPost(pid, post, idx + 1, data));
+    });
+
+    if(wasBottom) area.scrollTop = area.scrollHeight;
+  });
+}
+
+function buildPost(pid, post, num, allPosts) {
+  const div = document.createElement('div');
+  div.className = 'post';
+  div.id = `post-${pid}`;
+
+  const color = avatarColor(post.userId);
+
+  // ヘッダー
+  const header = document.createElement('div');
+  header.className = 'post-header';
+  header.innerHTML = `
+    <div class="post-avatar" style="background:${color}">${String(post.userId).slice(0,3)}</div>
+    <span class="post-id">${esc(post.userId)}</span>
+    <span class="post-num">No.${num}</span>
+    <span class="post-time">${fmt(post.ts)}</span>
+    <button class="reply-btn" onclick="setReply('${pid}','${esc(post.userId)}',${JSON.stringify(post.text)})">返信</button>
+  `;
+  div.appendChild(header);
+
+  // 引用ブロック
+  if(post.replyTo && allPosts[post.replyTo]) {
+    const orig = allPosts[post.replyTo];
+    const quote = document.createElement('div');
+    quote.className = 'quote-block';
+    const preview = orig.text.length > 60 ? orig.text.slice(0,60) + '…' : orig.text;
+    quote.innerHTML = `<div class="quote-user">${esc(orig.userId)} より</div><div class="quote-text">${esc(preview)}</div>`;
+    div.appendChild(quote);
+  }
+
+  // 本文
+  const body = document.createElement('div');
+  body.className = 'post-text';
+  body.textContent = post.text;
+  div.appendChild(body);
+
+  return div;
+}
+
+// ── 返信セット
+window.setReply = function(pid, userId, text) {
+  replyTarget = { pid, userId, text };
+  const label = document.getElementById('reply-label');
+  const preview = text.length > 30 ? text.slice(0,30) + '…' : text;
+  label.textContent = `↩ ${userId} 「${preview}」`;
+  document.getElementById('reply-indicator').classList.remove('hide');
+  document.getElementById('post-input').focus();
+};
+window.cancelReply = function() {
+  replyTarget = null;
+  document.getElementById('reply-indicator').classList.add('hide');
+};
+
+// ── 投稿送信
+document.getElementById('post-input').addEventListener('keydown', e => {
+  if(e.key==='Enter' && !e.shiftKey) { e.preventDefault(); submitPost(); }
+});
+document.getElementById('post-input').addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+});
+
+window.submitPost = async function() {
+  const inp = document.getElementById('post-input');
+  const text = inp.value.trim();
+  if(!text || !currentThreadId) return;
+  inp.value = ''; inp.style.height = 'auto';
+
+  const now = Date.now();
+  const postData = { userId: myId, text, ts: now };
+  if(replyTarget) postData.replyTo = replyTarget.pid;
+
+  await push(ref(db, `posts/${currentThreadId}`), postData);
+
+  // スレッドのlastActivity・postCount更新
+  const threadSnap = await get(ref(db, `threads/${currentThreadId}`));
+  if(threadSnap.exists()) {
+    const t = threadSnap.val();
+    const { update } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js");
+    await update(ref(db, `threads/${currentThreadId}`), {
+      lastActivity: now,
+      postCount: (t.postCount || 0) + 1
+    });
+  }
+
+  cancelReply();
+};
+
+// ── XSS対策
+function esc(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 </script>
 
