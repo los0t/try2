@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
@@ -8,262 +7,264 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0e0e14;
-      --surface: #16161f;
-      --card: #1e1e2a;
-      --border: #2e2e42;
-      --accent: #6c63ff;
-      --green: #4ade80;
-      --text: #e4e4f0;
-      --muted: #666680;
+      --bg: #f5f5f7;
+      --surface: #ffffff;
+      --card: #f0f0f3;
+      --border: #d8d8de;
+      --accent: #5b52e8;
+      --accent-light: #ebe9ff;
+      --green: #16a34a;
+      --text: #111118;
+      --muted: #666678;
+      --danger: #e53935;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      font-family: 'Noto Sans JP', sans-serif;
+      background: var(--bg); color: var(--text);
+    }
 
-```
-/* bodyは常に画面サイズ固定・スクロールなし */
-html, body {
-  width: 100%; height: 100%;
-  overflow: hidden;
-  font-family: 'Noto Sans JP', sans-serif;
-  background: var(--bg); color: var(--text);
-}
+    /* ══ ページ管理 ══ */
+    .page {
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: var(--bg);
+      display: none; flex-direction: column; overflow: hidden;
+    }
+    .page.show { display: flex; }
+    #pg-login { align-items: center; justify-content: center; }
 
-/* ══ 画面：1つだけ表示 ══ */
-.page {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: var(--bg);
-  display: none;          /* 基本は非表示 */
-  flex-direction: column;
-  overflow: hidden;
-}
-.page.show { display: flex; } /* アクティブのみ表示 */
+    /* ══ ログイン ══ */
+    .login-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 44px 28px;
+      width: min(310px, 88vw);
+      display: flex; flex-direction: column; gap: 18px; align-items: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,.10);
+    }
+    .logo { font-family: 'JetBrains Mono', monospace; font-size: 26px; color: var(--accent); }
+    .login-desc { font-size: 13px; color: var(--muted); text-align: center; line-height: 1.7; }
+    #id-input {
+      width: 100%; background: var(--card);
+      border: 1.5px solid var(--border); border-radius: 12px;
+      color: var(--text); font-family: 'JetBrains Mono', monospace;
+      font-size: 30px; font-weight: 700; padding: 14px;
+      text-align: center; outline: none; letter-spacing: 4px;
+    }
+    #id-input:focus { border-color: var(--accent); }
+    #id-input::placeholder { font-size: 15px; letter-spacing: 0; color: var(--muted); }
+    .login-btn {
+      width: 100%; background: var(--accent); color: #fff;
+      border: none; border-radius: 12px; padding: 14px;
+      font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit;
+    }
 
-/* ログインページだけ中央揃え */
-#pg-login {
-  align-items: center;
-  justify-content: center;
-}
+    /* ══ ヘッダー ══ */
+    .header {
+      height: 52px; flex-shrink: 0;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding: 0 14px; gap: 10px;
+    }
+    .h-title { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: var(--accent); }
+    .h-sub { font-size: 11px; color: var(--green); }
+    .h-badge {
+      margin-left: auto;
+      background: var(--accent); color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px; flex-shrink: 0;
+    }
+    .h-back {
+      background: none; border: 1px solid var(--border);
+      color: var(--muted); border-radius: 8px;
+      padding: 6px 12px; font-size: 13px;
+      cursor: pointer; font-family: inherit; flex-shrink: 0;
+    }
+    .h-thread-title {
+      flex: 1; font-size: 14px; font-weight: 700; color: var(--text);
+      overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+    }
 
-/* ══ ログイン ══ */
-.login-box {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 44px 28px;
-  width: min(310px, 88vw);
-  display: flex; flex-direction: column; gap: 18px; align-items: center;
-  box-shadow: 0 20px 60px rgba(0,0,0,.6);
-}
-.logo { font-family: 'JetBrains Mono', monospace; font-size: 26px; color: var(--accent); }
-.login-desc { font-size: 13px; color: var(--muted); text-align: center; line-height: 1.7; }
-#id-input {
-  width: 100%;
-  background: var(--surface);
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  color: var(--text);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 30px; font-weight: 700;
-  padding: 14px;
-  text-align: center; outline: none;
-  letter-spacing: 4px;
-}
-#id-input:focus { border-color: var(--accent); }
-#id-input::placeholder { font-size: 15px; letter-spacing: 0; color: var(--muted); }
-.login-btn {
-  width: 100%; background: var(--accent); color: #fff;
-  border: none; border-radius: 12px; padding: 14px;
-  font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit;
-}
+    /* ══ スレッド一覧 ══ */
+    .list-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    .thread-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      cursor: pointer;
+      user-select: none;
+    }
+    .thread-item:active { background: var(--card); }
+    .t-icon {
+      width: 42px; height: 42px; border-radius: 10px;
+      background: var(--accent-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .t-info { flex: 1; min-width: 0; }
+    .t-title { font-size: 14px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .t-meta { font-size: 11px; color: var(--muted); margin-top: 3px; }
+    .t-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+    .t-count { font-size: 11px; color: var(--muted); }
+    .t-arrow { color: var(--muted); font-size: 16px; }
+    .list-empty { text-align: center; color: var(--muted); font-size: 13px; padding: 60px 20px; line-height: 2.2; }
 
-/* ══ 共通ヘッダー ══ */
-.header {
-  height: 52px; flex-shrink: 0;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center;
-  padding: 0 14px; gap: 10px;
-}
-.h-title { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: var(--accent); }
-.h-sub { font-size: 11px; color: var(--green); }
-.h-badge {
-  margin-left: auto;
-  background: var(--accent); color: #fff;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px; font-weight: 700;
-  padding: 3px 10px; border-radius: 20px;
-  flex-shrink: 0;
-}
-.h-back {
-  background: none; border: 1px solid var(--border);
-  color: var(--muted); border-radius: 8px;
-  padding: 6px 12px; font-size: 13px;
-  cursor: pointer; font-family: inherit; flex-shrink: 0;
-}
-.h-thread-title {
-  flex: 1; font-size: 14px; font-weight: 700;
-  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-}
+    /* ＋ボタン */
+    .fab {
+      position: absolute; bottom: 24px; right: 20px;
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--accent); color: #fff; border: none;
+      font-size: 28px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px rgba(91,82,232,.4);
+    }
 
-/* ══ スレッド一覧 ══ */
-.list-scroll {
-  flex: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-.thread-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
-}
-.thread-item:active { background: var(--card); }
-.t-icon {
-  width: 42px; height: 42px; border-radius: 10px;
-  background: var(--accent);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px; flex-shrink: 0;
-}
-.t-info { flex: 1; min-width: 0; }
-.t-title { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.t-meta { font-size: 11px; color: var(--muted); margin-top: 3px; }
-.t-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
-.t-count { font-size: 11px; color: var(--muted); }
-.t-arrow { color: var(--muted); font-size: 16px; }
-.list-empty { text-align: center; color: var(--muted); font-size: 13px; padding: 60px 20px; line-height: 2.2; }
+    /* ══ モーダル ══ */
+    .overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,.4);
+      display: none; align-items: center; justify-content: center;
+      padding: 20px; z-index: 99;
+    }
+    .overlay.show { display: flex; }
+    .modal {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 18px; padding: 24px;
+      width: 100%; max-width: 320px;
+      display: flex; flex-direction: column; gap: 14px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.15);
+    }
+    .modal h3 { font-size: 15px; color: var(--text); }
+    .modal-inp {
+      width: 100%; background: var(--card);
+      border: 1.5px solid var(--border); border-radius: 10px;
+      color: var(--text); font-family: inherit; font-size: 15px;
+      padding: 12px 14px; outline: none;
+    }
+    .modal-inp:focus { border-color: var(--accent); }
+    .modal-inp::placeholder { color: var(--muted); }
+    .modal-btns { display: flex; gap: 10px; }
+    .m-cancel {
+      flex: 1; background: none; border: 1px solid var(--border);
+      color: var(--muted); border-radius: 10px; padding: 12px;
+      font-size: 14px; cursor: pointer; font-family: inherit;
+    }
+    .m-ok {
+      flex: 2; background: var(--accent); color: #fff;
+      border: none; border-radius: 10px; padding: 12px;
+      font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit;
+    }
 
-/* ＋ボタン */
-.fab {
-  position: absolute; bottom: 24px; right: 20px;
-  width: 56px; height: 56px; border-radius: 50%;
-  background: var(--accent); color: #fff; border: none;
-  font-size: 28px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 24px rgba(108,99,255,.5);
-}
+    /* ══ 確認ダイアログ ══ */
+    .confirm-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,.4);
+      display: none; align-items: center; justify-content: center;
+      padding: 20px; z-index: 200;
+    }
+    .confirm-overlay.show { display: flex; }
+    .confirm-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 24px;
+      width: 100%; max-width: 300px;
+      display: flex; flex-direction: column; gap: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.15);
+    }
+    .confirm-box p { font-size: 14px; color: var(--text); line-height: 1.6; }
+    .confirm-btns { display: flex; gap: 10px; }
+    .c-no {
+      flex: 1; background: none; border: 1px solid var(--border);
+      color: var(--muted); border-radius: 10px; padding: 11px;
+      font-size: 14px; cursor: pointer; font-family: inherit;
+    }
+    .c-yes {
+      flex: 1; background: var(--danger); color: #fff;
+      border: none; border-radius: 10px; padding: 11px;
+      font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit;
+    }
 
-/* ══ モーダル ══ */
-.overlay {
-  position: absolute; inset: 0;
-  background: rgba(0,0,0,.75);
-  display: none;
-  align-items: center; justify-content: center;
-  padding: 20px; z-index: 99;
-}
-.overlay.show { display: flex; }
-.modal {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 18px; padding: 24px;
-  width: 100%; max-width: 320px;
-  display: flex; flex-direction: column; gap: 14px;
-}
-.modal h3 { font-size: 15px; }
-.modal-inp {
-  width: 100%; background: var(--surface);
-  border: 1.5px solid var(--border); border-radius: 10px;
-  color: var(--text); font-family: inherit; font-size: 15px;
-  padding: 12px 14px; outline: none;
-}
-.modal-inp:focus { border-color: var(--accent); }
-.modal-inp::placeholder { color: var(--muted); }
-.modal-btns { display: flex; gap: 10px; }
-.m-cancel {
-  flex: 1; background: none; border: 1px solid var(--border);
-  color: var(--muted); border-radius: 10px; padding: 12px;
-  font-size: 14px; cursor: pointer; font-family: inherit;
-}
-.m-ok {
-  flex: 2; background: var(--accent); color: #fff;
-  border: none; border-radius: 10px; padding: 12px;
-  font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit;
-}
+    /* ══ スレッド内 ══ */
+    .posts-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 8px 0; }
+    .post {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      cursor: pointer;
+      user-select: none;
+    }
+    .post:active { background: var(--card); }
+    .post.replying { background: var(--accent-light); }
+    .post-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .p-av {
+      width: 26px; height: 26px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700;
+      color: #fff; flex-shrink: 0;
+    }
+    .p-id { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--accent); }
+    .p-num { font-size: 11px; color: var(--muted); }
+    .p-time { font-size: 11px; color: var(--muted); margin-left: auto; }
+    .p-mine-hint { font-size: 10px; color: var(--muted); margin-left: 4px; }
+    .quote {
+      background: var(--card); border-left: 3px solid var(--accent);
+      border-radius: 0 6px 6px 0; padding: 7px 10px; margin-bottom: 7px;
+    }
+    .q-user { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); margin-bottom: 2px; }
+    .q-text { font-size: 12px; color: var(--muted); line-height: 1.5; word-break: break-word; }
+    .post-body { font-size: 14px; line-height: 1.7; color: var(--text); word-break: break-word; white-space: pre-wrap; }
+    .posts-empty { text-align: center; color: var(--muted); font-size: 13px; padding: 50px 20px; line-height: 2.2; }
 
-/* ══ スレッド内 ══ */
-.posts-scroll {
-  flex: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  padding: 8px 0;
-}
-.post {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
-}
-.post:active, .post.replying { background: rgba(108,99,255,.1); }
-.post-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-.p-av {
-  width: 26px; height: 26px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700;
-  color: #fff; flex-shrink: 0;
-}
-.p-id { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--accent); }
-.p-num { font-size: 11px; color: var(--muted); }
-.p-time { font-size: 11px; color: var(--muted); margin-left: auto; }
-.quote {
-  background: #13131c; border-left: 3px solid var(--accent);
-  border-radius: 0 6px 6px 0; padding: 7px 10px; margin-bottom: 7px;
-}
-.q-user { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); margin-bottom: 2px; }
-.q-text { font-size: 12px; color: var(--muted); line-height: 1.5; word-break: break-word; }
-.post-body { font-size: 14px; line-height: 1.7; word-break: break-word; white-space: pre-wrap; }
-.posts-empty { text-align: center; color: var(--muted); font-size: 13px; padding: 50px 20px; line-height: 2.2; }
+    /* 返信バナー */
+    .reply-bar {
+      display: none; background: var(--accent-light);
+      border-top: 2px solid var(--accent);
+      padding: 8px 14px; align-items: center; gap: 10px; flex-shrink: 0;
+    }
+    .reply-bar.show { display: flex; }
+    .rb-body { flex: 1; min-width: 0; }
+    .rb-label { font-size: 11px; color: var(--accent); margin-bottom: 2px; font-weight: 700; }
+    .rb-preview { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .rb-cancel { background: none; border: none; color: var(--muted); font-size: 22px; cursor: pointer; padding: 0 2px; flex-shrink: 0; }
 
-/* 返信バナー */
-.reply-bar {
-  display: none;
-  background: #1a1a2e;
-  border-top: 1px solid var(--accent);
-  padding: 8px 14px;
-  align-items: center; gap: 10px;
-  flex-shrink: 0;
-}
-.reply-bar.show { display: flex; }
-.rb-body { flex: 1; min-width: 0; }
-.rb-label { font-size: 11px; color: var(--accent); margin-bottom: 2px; }
-.rb-preview { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.rb-cancel { background: none; border: none; color: var(--muted); font-size: 22px; cursor: pointer; padding: 0 2px; flex-shrink: 0; }
+    /* 入力エリア */
+    .input-bar {
+      display: flex; align-items: flex-end; gap: 10px;
+      padding: 10px 14px 14px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    #post-input {
+      flex: 1; background: var(--card);
+      border: 1.5px solid var(--border); border-radius: 14px;
+      color: var(--text); font-family: inherit; font-size: 15px;
+      padding: 10px 14px; outline: none; resize: none;
+      min-height: 42px; max-height: 100px; line-height: 1.5;
+      -webkit-appearance: none;
+    }
+    #post-input:focus { border-color: var(--accent); }
+    #post-input::placeholder { color: var(--muted); }
+    .send-btn {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--accent); color: #fff; border: none;
+      font-size: 18px; cursor: pointer; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
 
-/* 入力ボックス */
-.input-bar {
-  display: flex; align-items: flex-end; gap: 10px;
-  padding: 10px 14px 14px;
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  flex-shrink: 0;
-}
-#post-input {
-  flex: 1;
-  background: var(--card);
-  border: 1.5px solid var(--border);
-  border-radius: 14px;
-  color: var(--text);
-  font-family: inherit; font-size: 15px;
-  padding: 10px 14px;
-  outline: none; resize: none;
-  min-height: 42px; max-height: 100px;
-  line-height: 1.5;
-  -webkit-appearance: none;
-}
-#post-input:focus { border-color: var(--accent); }
-#post-input::placeholder { color: var(--muted); }
-.send-btn {
-  width: 44px; height: 44px; border-radius: 50%;
-  background: var(--accent); color: #fff; border: none;
-  font-size: 18px; cursor: pointer; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-}
-```
-
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
   </style>
 </head>
 <body>
 
 <!-- ページ1：ログイン -->
-
 <div id="pg-login" class="page show">
   <div class="login-box">
     <div class="logo">さわch</div>
@@ -274,7 +275,6 @@ html, body {
 </div>
 
 <!-- ページ2：スレッド一覧 -->
-
 <div id="pg-list" class="page">
   <div class="header">
     <div class="h-title">さわch</div>
@@ -285,7 +285,6 @@ html, body {
     <div class="list-empty">スレッドがありません<br>右下の ＋ から作成できます</div>
   </div>
   <button class="fab" id="fab">＋</button>
-  <!-- モーダル（このページ内に閉じ込める） -->
   <div class="overlay" id="modal-overlay">
     <div class="modal">
       <h3>📝 新しいスレッドを作る</h3>
@@ -299,7 +298,6 @@ html, body {
 </div>
 
 <!-- ページ3：スレッド内 -->
-
 <div id="pg-thread" class="page">
   <div class="header">
     <button class="h-back" id="btn-back">← 一覧</button>
@@ -317,8 +315,19 @@ html, body {
     <button class="rb-cancel" id="reply-cancel-btn">✕</button>
   </div>
   <div class="input-bar">
-    <textarea id="post-input" placeholder="投稿する… (投稿をタップで返信)" rows="1"></textarea>
+    <textarea id="post-input" placeholder="投稿する… (投稿をタップで返信)" rows="1" maxlength="1000"></textarea>
     <button class="send-btn" id="send-btn">➤</button>
+  </div>
+</div>
+
+<!-- 確認ダイアログ（全ページ共通） -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <p id="confirm-msg">削除しますか？</p>
+    <div class="confirm-btns">
+      <button class="c-no" id="confirm-no">キャンセル</button>
+      <button class="c-yes" id="confirm-yes">削除する</button>
+    </div>
   </div>
 </div>
 
@@ -327,7 +336,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import { getDatabase, ref, push, onValue, remove, get, update }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-// ── Firebase
 const fb = initializeApp({
   apiKey: "AIzaSyDl8UJ_ibhxGrtZ6vfyPit5S3_vACs371U",
   authDomain: "onlychat-de190.firebaseapp.com",
@@ -339,20 +347,19 @@ const fb = initializeApp({
 });
 const db = getDatabase(fb);
 
-// ── 状態
 let myId = null;
-let curThread = null;   // { id, title }
-let replyTo = null;     // { pid, userId, text }
+let curThread = null;
+let replyTo = null;
 let postsCache = {};
 
-// ── ページ切り替え（1つだけ表示）
+// ── ページ切り替え
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('show'));
   document.getElementById(id).classList.add('show');
 }
 
 // ── カラー
-const COLORS = ['#6c63ff','#ff6b9d','#43e97b','#f7971e','#4facfe','#f953c6','#43cbff','#fa709a'];
+const COLORS = ['#5b52e8','#e85290','#16a34a','#d97706','#0284c7','#9333ea','#0891b2','#dc2626'];
 function col(id) { return COLORS[String(id).split('').reduce((a,c)=>a+c.charCodeAt(0),0)%COLORS.length]; }
 function fmt(ts) {
   if(!ts) return '';
@@ -361,12 +368,50 @@ function fmt(ts) {
 }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+// ── 確認ダイアログ
+let confirmCallback = null;
+function showConfirm(msg, cb) {
+  confirmCallback = cb;
+  document.getElementById('confirm-msg').textContent = msg;
+  document.getElementById('confirm-overlay').classList.add('show');
+}
+document.getElementById('confirm-no').addEventListener('click', () => {
+  document.getElementById('confirm-overlay').classList.remove('show');
+  confirmCallback = null;
+});
+document.getElementById('confirm-yes').addEventListener('click', () => {
+  document.getElementById('confirm-overlay').classList.remove('show');
+  if(confirmCallback) confirmCallback();
+  confirmCallback = null;
+});
+
+// ── 長押し検出ヘルパー
+function addLongPress(el, cb) {
+  let timer = null;
+  let moved = false;
+
+  const start = (e) => {
+    moved = false;
+    timer = setTimeout(() => {
+      if(!moved) cb(e);
+    }, 600);
+  };
+  const cancel = () => { clearTimeout(timer); };
+  const move = () => { moved = true; clearTimeout(timer); };
+
+  el.addEventListener('touchstart', start, { passive: true });
+  el.addEventListener('touchend', cancel);
+  el.addEventListener('touchmove', move, { passive: true });
+  el.addEventListener('mousedown', start);
+  el.addEventListener('mouseup', cancel);
+  el.addEventListener('mousemove', move);
+}
+
 // ══════════════════════════════
 //  ログイン
 // ══════════════════════════════
 document.getElementById('id-input').addEventListener('keydown', e => { if(e.key==='Enter') login(); });
 document.getElementById('login-btn').addEventListener('click', login);
-
 function login() {
   const v = document.getElementById('id-input').value.trim();
   if(!v || isNaN(v) || Number(v)<=0) { alert('数字を入力してください'); return; }
@@ -385,7 +430,6 @@ function initThreadList() {
   onValue(ref(db,'threads'), snap => {
     const data = snap.val() || {};
     const now = Date.now();
-    // 1週間経過スレを削除
     Object.entries(data).forEach(([tid,t]) => {
       if(now - (t.lastActivity||t.createdAt||0) > 7*24*60*60*1000) {
         remove(ref(db,`threads/${tid}`));
@@ -420,15 +464,28 @@ function renderList(data) {
         <div class="t-count">${t.postCount||0}件</div>
         <div class="t-arrow">›</div>
       </div>`;
+
+    // タップ → スレッドに入る
     d.addEventListener('click', () => enterThread(tid, t.title));
+
+    // 長押し → 自分が作ったスレのみ削除可
+    if(String(t.createdBy) === String(myId)) {
+      addLongPress(d, () => {
+        showConfirm(`「${t.title}」を削除しますか？\n（投稿もすべて削除されます）`, async () => {
+          await remove(ref(db,`threads/${tid}`));
+          await remove(ref(db,`posts/${tid}`));
+        });
+      });
+    }
+
     el.appendChild(d);
   });
 }
 
-// ── ＋ボタン・モーダル
+// ── モーダル
 document.getElementById('fab').addEventListener('click', () => {
   document.getElementById('modal-overlay').classList.add('show');
-  setTimeout(()=>document.getElementById('thread-title-inp').focus(),100);
+  setTimeout(() => document.getElementById('thread-title-inp').focus(), 100);
 });
 document.getElementById('modal-cancel').addEventListener('click', closeModal);
 document.getElementById('modal-overlay').addEventListener('click', e => {
@@ -436,16 +493,15 @@ document.getElementById('modal-overlay').addEventListener('click', e => {
 });
 document.getElementById('thread-title-inp').addEventListener('keydown', e => { if(e.key==='Enter') doCreate(); });
 document.getElementById('modal-ok').addEventListener('click', doCreate);
-
 function closeModal() {
   document.getElementById('modal-overlay').classList.remove('show');
   document.getElementById('thread-title-inp').value = '';
 }
 async function doCreate() {
   const title = document.getElementById('thread-title-inp').value.trim();
-  if(!title){ alert('タイトルを入力してください'); return; }
+  if(!title) { alert('タイトルを入力してください'); return; }
   const now = Date.now();
-  await push(ref(db,'threads'),{title,createdBy:myId,createdAt:now,lastActivity:now,postCount:0});
+  await push(ref(db,'threads'), { title, createdBy: myId, createdAt: now, lastActivity: now, postCount: 0 });
   closeModal();
 }
 
@@ -488,24 +544,29 @@ function renderPosts(data) {
   }
   area.innerHTML = '';
   entries.forEach(([pid,post],i) => {
-    const div = buildPost(pid,post,i+1,data);
-    area.appendChild(div);
+    area.appendChild(buildPost(pid, post, i+1, data));
   });
   if(atBottom) area.scrollTop = area.scrollHeight;
-  if(replyTo) { const el=document.getElementById('p-'+replyTo.pid); if(el) el.classList.add('replying'); }
+  if(replyTo) {
+    const el = document.getElementById('p-'+replyTo.pid);
+    if(el) el.classList.add('replying');
+  }
 }
 
-function buildPost(pid,post,num,all) {
+function buildPost(pid, post, num, all) {
   const div = document.createElement('div');
   div.className = 'post';
   div.id = 'p-'+pid;
   const c = col(post.userId);
+  const isMe = String(post.userId) === String(myId);
+
   const hdr = document.createElement('div');
   hdr.className = 'post-header';
   hdr.innerHTML = `
     <div class="p-av" style="background:${c}">${String(post.userId).slice(0,3)}</div>
     <span class="p-id">${esc(post.userId)}</span>
     <span class="p-num">No.${num}</span>
+    ${isMe ? '<span class="p-mine-hint">（長押しで削除）</span>' : ''}
     <span class="p-time">${fmt(post.ts)}</span>`;
   div.appendChild(hdr);
 
@@ -523,8 +584,24 @@ function buildPost(pid,post,num,all) {
   body.textContent = post.text;
   div.appendChild(body);
 
-  // タップで返信
+  // タップ → 返信
   div.addEventListener('click', () => setReply(pid, post.userId, post.text));
+
+  // 長押し → 自分の投稿のみ削除
+  if(isMe) {
+    addLongPress(div, () => {
+      showConfirm('この投稿を削除しますか？', async () => {
+        await remove(ref(db,`posts/${curThread.id}/${pid}`));
+        // postCountを1減らす
+        const snap = await get(ref(db,`threads/${curThread.id}`));
+        if(snap.exists()) {
+          const cnt = (snap.val().postCount||1) - 1;
+          await update(ref(db,`threads/${curThread.id}`), { postCount: Math.max(0, cnt) });
+        }
+      });
+    });
+  }
+
   return div;
 }
 
@@ -557,18 +634,17 @@ document.getElementById('send-btn').addEventListener('click', doPost);
 async function doPost() {
   const inp = document.getElementById('post-input');
   const text = inp.value.trim();
-  if(!text||!curThread) return;
+  if(!text || !curThread) return;
   inp.value=''; inp.style.height='auto';
 
   const now = Date.now();
-  const data = { userId:myId, text, ts:now };
+  const data = { userId: myId, text, ts: now };
   if(replyTo) data.replyTo = replyTo.pid;
 
   await push(ref(db,`posts/${curThread.id}`), data);
-
   const snap = await get(ref(db,`threads/${curThread.id}`));
   if(snap.exists()) {
-    await update(ref(db,`threads/${curThread.id}`),{
+    await update(ref(db,`threads/${curThread.id}`), {
       lastActivity: now,
       postCount: (snap.val().postCount||0)+1
     });
@@ -578,6 +654,5 @@ async function doPost() {
   document.querySelectorAll('.post').forEach(e=>e.classList.remove('replying'));
 }
 </script>
-
 </body>
 </html>
