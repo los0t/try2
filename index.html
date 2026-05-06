@@ -1,16 +1,14 @@
 <!DOCTYPE html>
-
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>さわch</title>
-  
-  
-  
-  
-  
-    <!-- OGP（SNS用） -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>さわch</title>
+
+
+
+
+  <!-- OGP（SNS用） -->
 
   <meta property="og:title" content="さわch">
 
@@ -22,169 +20,289 @@
     
       <!-- 任意：サムネ -->
   <meta property="og:image" content="mark_chuui.png">
-  
-  
-  
-  
-  
-  
-  
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --bg: #f5f5f7;
-      --surface: #ffffff;
-      --card: #f0f0f3;
-      --border: #d8d8de;
-      --accent: #5b52e8;
-      --accent-light: #ebe9ff;
-      --green: #16a34a;
-      --text: #111118;
-      --muted: #666678;
-      --danger: #e53935;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); }
+    
 
-```
-.page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: none; flex-direction: column; overflow: hidden; }
-.page.show { display: flex; }
-#pg-login { align-items: center; justify-content: center; }
 
-/* ログイン */
-.login-box { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 44px 28px; width: min(310px,88vw); display: flex; flex-direction: column; gap: 18px; align-items: center; box-shadow: 0 8px 32px rgba(0,0,0,.10); }
-.logo { font-family: 'JetBrains Mono', monospace; font-size: 26px; color: var(--accent); }
-.login-desc { font-size: 13px; color: var(--muted); text-align: center; line-height: 1.7; }
-#id-input { width: 100%; background: var(--card); border: 1.5px solid var(--border); border-radius: 12px; color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 30px; font-weight: 700; padding: 14px; text-align: center; outline: none; letter-spacing: 4px; }
-#id-input:focus { border-color: var(--accent); }
-#id-input::placeholder { font-size: 15px; letter-spacing: 0; color: var(--muted); }
-.login-btn { width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 12px; padding: 14px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit; }
 
-/* ヘッダー */
-.header { height: 52px; flex-shrink: 0; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 14px; gap: 10px; }
-.h-title { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: var(--accent); }
-.h-sub { font-size: 11px; color: var(--green); }
-.h-badge { margin-left: auto; background: var(--accent); color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; flex-shrink: 0; }
-.h-back { background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 8px; padding: 6px 12px; font-size: 13px; cursor: pointer; font-family: inherit; flex-shrink: 0; }
-.h-thread-title { flex: 1; font-size: 14px; font-weight: 700; color: var(--text); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 
-/* スレッド一覧 */
-.list-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-.thread-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--border); background: var(--surface); cursor: pointer; user-select: none; }
-.thread-item:active { background: var(--card); }
-.t-icon { width: 42px; height: 42px; border-radius: 10px; background: var(--accent-light); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
-.t-info { flex: 1; min-width: 0; }
-.t-title { font-size: 14px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.t-meta { font-size: 11px; color: var(--muted); margin-top: 3px; }
-.t-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
-.t-count { font-size: 11px; color: var(--muted); }
-.t-arrow { color: var(--muted); font-size: 16px; }
-.list-empty { text-align: center; color: var(--muted); font-size: 13px; padding: 60px 20px; line-height: 2.2; }
 
-.fab { position: absolute; bottom: 24px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: var(--accent); color: #fff; border: none; font-size: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(91,82,232,.4); }
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%;overflow:hidden}
+body{height:100%;overflow:hidden;font-family:'Noto Sans JP',sans-serif;background:#f5f5f7;color:#111118}
 
-/* モーダル */
-.overlay { position: absolute; inset: 0; background: rgba(0,0,0,.4); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 99; }
-.overlay.show { display: flex; }
-.modal { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 24px; width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 8px 32px rgba(0,0,0,.15); }
-.modal h3 { font-size: 15px; color: var(--text); }
-.modal-inp { width: 100%; background: var(--card); border: 1.5px solid var(--border); border-radius: 10px; color: var(--text); font-family: inherit; font-size: 15px; padding: 12px 14px; outline: none; }
-.modal-inp:focus { border-color: var(--accent); }
-.modal-inp::placeholder { color: var(--muted); }
-.modal-btns { display: flex; gap: 10px; }
-.m-cancel { flex: 1; background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 10px; padding: 12px; font-size: 14px; cursor: pointer; font-family: inherit; }
-.m-ok { flex: 2; background: var(--accent); color: #fff; border: none; border-radius: 10px; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; }
+/* ===== 画面管理 =====
+   全画面を fixed で重ねる
+   active でない画面は visibility:hidden + pointer-events:none
+   → スクロールしても絶対に透けない */
+.pg{
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;
+  background:#f5f5f7;
+  visibility:hidden;
+  pointer-events:none;
+  overflow:hidden;
+}
+.pg.on{
+  visibility:visible;
+  pointer-events:auto;
+}
+/* ログインだけ中央揃え */
+#pg-login{align-items:center;justify-content:center}
 
-/* 確認ダイアログ */
-.confirm-overlay { position: absolute; inset: 0; background: rgba(0,0,0,.4); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 200; }
-.confirm-overlay.show { display: flex; }
-.confirm-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; width: 100%; max-width: 300px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 8px 32px rgba(0,0,0,.15); }
-.confirm-box p { font-size: 14px; color: var(--text); line-height: 1.6; }
-.confirm-btns { display: flex; gap: 10px; }
-.c-no { flex: 1; background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 10px; padding: 11px; font-size: 14px; cursor: pointer; font-family: inherit; }
-.c-yes { flex: 1; background: var(--danger); color: #fff; border: none; border-radius: 10px; padding: 11px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; }
+/* ===== カラー変数 ===== */
+:root{
+  --acc:#5b52e8;
+  --acc-l:#ebe9ff;
+  --sur:#fff;
+  --card:#f0f0f3;
+  --bdr:#d8d8de;
+  --txt:#111118;
+  --mut:#666678;
+  --grn:#16a34a;
+  --red:#e53935;
+}
 
-/* 投稿 */
-.posts-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 8px 0; }
-.post { padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--surface); cursor: pointer; user-select: none; }
-.post:active { background: var(--card); }
-.post.replying { background: var(--accent-light); }
-.post-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-.p-av { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; color: #fff; flex-shrink: 0; }
-.p-id { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--accent); }
-.p-num { font-size: 11px; color: var(--muted); }
-.p-time { font-size: 11px; color: var(--muted); margin-left: auto; }
-.p-mine-hint { font-size: 10px; color: var(--muted); margin-left: 4px; }
-.quote { background: var(--card); border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0; padding: 7px 10px; margin-bottom: 7px; }
-.q-user { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); margin-bottom: 2px; }
-.q-text { font-size: 12px; color: var(--muted); line-height: 1.5; word-break: break-word; }
-.post-body { font-size: 14px; line-height: 1.7; color: var(--text); word-break: break-word; white-space: pre-wrap; }
-.post-img { margin-top: 8px; max-width: 100%; max-height: 260px; border-radius: 10px; object-fit: contain; display: block; background: var(--card); }
+/* ===== ログイン ===== */
+.login-box{
+  background:var(--sur);border:1px solid var(--bdr);border-radius:20px;
+  padding:44px 28px;width:min(310px,90vw);
+  display:flex;flex-direction:column;gap:18px;align-items:center;
+  box-shadow:0 8px 32px rgba(0,0,0,.10);
+}
+.logo{font-family:'JetBrains Mono',monospace;font-size:26px;color:var(--acc)}
+.login-desc{font-size:13px;color:var(--mut);text-align:center;line-height:1.7}
+#id-input{
+  width:100%;background:var(--card);border:1.5px solid var(--bdr);border-radius:12px;
+  color:var(--txt);font-family:'JetBrains Mono',monospace;
+  font-size:30px;font-weight:700;padding:14px;text-align:center;outline:none;letter-spacing:4px;
+}
+#id-input:focus{border-color:var(--acc)}
+#id-input::placeholder{font-size:15px;letter-spacing:0;color:var(--mut)}
+.login-btn{
+  width:100%;background:var(--acc);color:#fff;border:none;border-radius:12px;
+  padding:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;
+}
+
+/* ===== ヘッダー ===== */
+.hdr{
+  height:52px;flex-shrink:0;background:var(--sur);border-bottom:1px solid var(--bdr);
+  display:flex;align-items:center;padding:0 14px;gap:10px;
+}
+.hdr-title{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--acc)}
+.hdr-sub{font-size:11px;color:var(--grn)}
+.hdr-badge{
+  margin-left:auto;background:var(--acc);color:#fff;
+  font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;
+  padding:3px 10px;border-radius:20px;flex-shrink:0;
+}
+.hdr-back{
+  background:none;border:1px solid var(--bdr);color:var(--mut);
+  border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;font-family:inherit;flex-shrink:0;
+}
+.hdr-thread-title{
+  flex:1;font-size:14px;font-weight:700;color:var(--txt);
+  overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+}
+
+/* ===== スレッド一覧 ===== */
+.list-wrap{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.th-item{
+  display:flex;align-items:center;gap:12px;padding:14px 16px;
+  border-bottom:1px solid var(--bdr);background:var(--sur);cursor:pointer;user-select:none;
+}
+.th-item:active{background:var(--card)}
+.th-icon{
+  width:42px;height:42px;border-radius:10px;background:var(--acc-l);
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;
+}
+.th-info{flex:1;min-width:0}
+.th-title{font-size:14px;font-weight:700;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.th-meta{font-size:11px;color:var(--mut);margin-top:3px}
+.th-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.th-count{font-size:11px;color:var(--mut)}
+.th-arrow{color:var(--mut);font-size:16px}
+.list-empty{text-align:center;color:var(--mut);font-size:13px;padding:60px 20px;line-height:2.2}
+
+/* ＋ボタン */
+.fab{
+  position:absolute;bottom:24px;right:20px;
+  width:56px;height:56px;border-radius:50%;
+  background:var(--acc);color:#fff;border:none;font-size:28px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(91,82,232,.4);
+}
+
+/* ===== モーダル ===== */
+.modal-wrap{
+  position:absolute;inset:0;background:rgba(0,0,0,.4);
+  display:none;align-items:center;justify-content:center;padding:20px;z-index:50;
+}
+.modal-wrap.on{display:flex}
+.modal{
+  background:var(--sur);border:1px solid var(--bdr);border-radius:18px;padding:24px;
+  width:100%;max-width:320px;display:flex;flex-direction:column;gap:14px;
+  box-shadow:0 8px 32px rgba(0,0,0,.15);
+}
+.modal h3{font-size:15px;color:var(--txt)}
+.modal-inp{
+  width:100%;background:var(--card);border:1.5px solid var(--bdr);border-radius:10px;
+  color:var(--txt);font-family:inherit;font-size:15px;padding:12px 14px;outline:none;
+}
+.modal-inp:focus{border-color:var(--acc)}
+.modal-inp::placeholder{color:var(--mut)}
+.modal-btns{display:flex;gap:10px}
+.m-cancel{
+  flex:1;background:none;border:1px solid var(--bdr);color:var(--mut);
+  border-radius:10px;padding:12px;font-size:14px;cursor:pointer;font-family:inherit;
+}
+.m-ok{
+  flex:2;background:var(--acc);color:#fff;border:none;border-radius:10px;
+  padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;
+}
+
+/* ===== 確認ダイアログ ===== */
+.confirm-wrap{
+  position:fixed;inset:0;background:rgba(0,0,0,.4);
+  display:none;align-items:center;justify-content:center;padding:20px;z-index:999;
+}
+.confirm-wrap.on{display:flex}
+.confirm-box{
+  background:var(--sur);border:1px solid var(--bdr);border-radius:16px;padding:24px;
+  width:100%;max-width:300px;display:flex;flex-direction:column;gap:16px;
+  box-shadow:0 8px 32px rgba(0,0,0,.2);
+}
+.confirm-box p{font-size:14px;color:var(--txt);line-height:1.6;white-space:pre-wrap}
+.confirm-btns{display:flex;gap:10px}
+.c-no{
+  flex:1;background:none;border:1px solid var(--bdr);color:var(--mut);
+  border-radius:10px;padding:11px;font-size:14px;cursor:pointer;font-family:inherit;
+}
+.c-yes{
+  flex:1;background:var(--red);color:#fff;border:none;
+  border-radius:10px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;
+}
+
+/* ===== 投稿一覧 ===== */
+.posts-wrap{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:6px 0}
+.post{
+  padding:12px 16px;border-bottom:1px solid var(--bdr);
+  background:var(--sur);cursor:pointer;user-select:none;
+}
+.post:active{background:var(--card)}
+.post.replying{background:var(--acc-l)}
+.post-hdr{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.p-av{
+  width:26px;height:26px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;
+  color:#fff;flex-shrink:0;
+}
+.p-id{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--acc)}
+.p-num{font-size:11px;color:var(--mut)}
+.p-hint{font-size:10px;color:var(--mut);margin-left:2px}
+.p-time{font-size:11px;color:var(--mut);margin-left:auto}
+.quote{
+  background:var(--card);border-left:3px solid var(--acc);
+  border-radius:0 6px 6px 0;padding:7px 10px;margin-bottom:7px;
+}
+.q-user{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--acc);margin-bottom:2px}
+.q-text{font-size:12px;color:var(--mut);line-height:1.5;word-break:break-word}
+.post-body{font-size:14px;line-height:1.7;color:var(--txt);word-break:break-word;white-space:pre-wrap}
+.post-img{margin-top:8px;max-width:100%;max-height:260px;border-radius:10px;object-fit:contain;display:block;background:var(--card)}
 
 /* いいね */
-.post-footer { display: flex; align-items: center; margin-top: 10px; gap: 6px; }
-.like-btn { display: flex; align-items: center; gap: 4px; background: none; border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; font-size: 13px; color: var(--muted); cursor: pointer; font-family: inherit; user-select: none; }
-.like-btn.liked { background: #fff0f3; border-color: #f87171; color: var(--danger); }
-.like-count { font-size: 13px; font-weight: 700; }
+.post-foot{display:flex;align-items:center;margin-top:10px}
+.like-btn{
+  display:flex;align-items:center;gap:4px;
+  background:none;border:1px solid var(--bdr);border-radius:20px;
+  padding:4px 12px;font-size:13px;color:var(--mut);
+  cursor:pointer;font-family:inherit;user-select:none;
+}
+.like-btn.on{background:#fff0f3;border-color:#f87171;color:var(--red)}
 
-/* 返信バナー */
-.reply-bar { display: none; background: var(--accent-light); border-top: 2px solid var(--accent); padding: 8px 14px; align-items: center; gap: 10px; flex-shrink: 0; }
-.reply-bar.show { display: flex; }
-.rb-body { flex: 1; min-width: 0; }
-.rb-label { font-size: 11px; color: var(--accent); margin-bottom: 2px; font-weight: 700; }
-.rb-preview { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.rb-cancel { background: none; border: none; color: var(--muted); font-size: 22px; cursor: pointer; padding: 0 2px; flex-shrink: 0; }
+/* ===== 返信バナー ===== */
+.reply-bar{
+  display:none;background:var(--acc-l);border-top:2px solid var(--acc);
+  padding:8px 14px;align-items:center;gap:10px;flex-shrink:0;
+}
+.reply-bar.on{display:flex}
+.rb-body{flex:1;min-width:0}
+.rb-label{font-size:11px;color:var(--acc);font-weight:700;margin-bottom:2px}
+.rb-preview{font-size:12px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rb-x{background:none;border:none;color:var(--mut);font-size:22px;cursor:pointer;flex-shrink:0;padding:0 2px}
 
 /* 画像プレビュー */
-.img-preview-wrap { display: none; padding: 8px 14px 0; position: relative; width: fit-content; }
-.img-preview-wrap.show { display: block; }
-.img-preview { width: 72px; height: 72px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); display: block; }
-.img-preview-del { position: absolute; top: 2px; right: -8px; background: var(--danger); color: #fff; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.img-prev-wrap{display:none;padding:8px 14px 0;position:relative;width:fit-content}
+.img-prev-wrap.on{display:block}
+.img-prev{width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid var(--bdr);display:block}
+.img-prev-del{
+  position:absolute;top:2px;right:-10px;
+  background:var(--red);color:#fff;border:none;border-radius:50%;
+  width:20px;height:20px;font-size:11px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
 
-/* 入力エリア */
-.input-bar { display: flex; align-items: flex-end; gap: 8px; padding: 10px 14px 14px; background: var(--surface); border-top: 1px solid var(--border); flex-shrink: 0; }
-#post-input { flex: 1; background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; color: var(--text); font-family: inherit; font-size: 15px; padding: 10px 14px; outline: none; resize: none; min-height: 42px; max-height: 100px; line-height: 1.5; -webkit-appearance: none; }
-#post-input:focus { border-color: var(--accent); }
-#post-input::placeholder { color: var(--muted); }
-.img-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--card); border: 1.5px solid var(--border); color: var(--muted); font-size: 20px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-.img-btn.has-img { background: var(--accent-light); border-color: var(--accent); }
-.send-btn { width: 42px; height: 42px; border-radius: 50%; background: var(--accent); color: #fff; border: none; font-size: 18px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+/* ===== 入力エリア ===== */
+.input-bar{
+  display:flex;align-items:flex-end;gap:8px;
+  padding:10px 14px 14px;
+  background:var(--sur);border-top:1px solid var(--bdr);flex-shrink:0;
+}
+#post-input{
+  flex:1;background:var(--card);border:1.5px solid var(--bdr);border-radius:14px;
+  color:var(--txt);font-family:inherit;font-size:15px;
+  padding:10px 14px;outline:none;resize:none;
+  min-height:42px;max-height:100px;line-height:1.5;
+  -webkit-appearance:none;
+}
+#post-input:focus{border-color:var(--acc)}
+#post-input::placeholder{color:var(--mut)}
+.img-btn{
+  width:42px;height:42px;border-radius:50%;background:var(--card);
+  border:1.5px solid var(--bdr);color:var(--mut);font-size:20px;
+  cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+}
+.img-btn.on{background:var(--acc-l);border-color:var(--acc)}
+.send-btn{
+  width:42px;height:42px;border-radius:50%;background:var(--acc);
+  color:#fff;border:none;font-size:18px;cursor:pointer;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
 
-::-webkit-scrollbar { width: 3px; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-```
-
-  </style>
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:2px}
+</style>
 </head>
 <body>
 
-<!-- ページ1：ログイン -->
-
-<div id="pg-login" class="page show">
+<!-- ページ1: ログイン -->
+<div id="pg-login" class="pg on">
   <div class="login-box">
     <div class="logo">さわch</div>
     <p class="login-desc">数字を入力してください<br>それがあなたのユーザー名になります</p>
-    <input id="id-input" type="number" inputmode="numeric" placeholder="例: 1234" autocomplete="off" />
+    <input id="id-input" type="number" inputmode="numeric" placeholder="例: 1234" autocomplete="off">
     <button class="login-btn" id="login-btn">入室する →</button>
   </div>
 </div>
 
-<!-- ページ2：スレッド一覧 -->
-
-<div id="pg-list" class="page">
-  <div class="header">
-    <div class="h-title">さわch</div>
-    <div class="h-sub" id="sync-txt"></div>
-    <div class="h-badge" id="badge-list"></div>
+<!-- ページ2: スレッド一覧 -->
+<div id="pg-list" class="pg">
+  <div class="hdr">
+    <div class="hdr-title">さわch</div>
+    <div class="hdr-sub" id="sync-lbl"></div>
+    <div class="hdr-badge" id="badge-list"></div>
   </div>
-  <div class="list-scroll" id="thread-list">
+  <div class="list-wrap" id="thread-list">
     <div class="list-empty">スレッドがありません<br>右下の ＋ から作成できます</div>
   </div>
   <button class="fab" id="fab">＋</button>
-  <div class="overlay" id="modal-overlay">
+  <!-- スレッド作成モーダル -->
+  <div class="modal-wrap" id="modal-wrap">
     <div class="modal">
       <h3>📝 新しいスレッドを作る</h3>
-      <input class="modal-inp" id="thread-title-inp" placeholder="タイトルを入力..." maxlength="60" inputmode="text" />
+      <input class="modal-inp" id="thread-title-inp" placeholder="タイトルを入力..." maxlength="60">
       <div class="modal-btns">
         <button class="m-cancel" id="modal-cancel">キャンセル</button>
         <button class="m-ok" id="modal-ok">作成する</button>
@@ -193,169 +311,154 @@
   </div>
 </div>
 
-<!-- ページ3：スレッド内 -->
-
-<div id="pg-thread" class="page">
-  <div class="header">
-    <button class="h-back" id="btn-back">← 一覧</button>
-    <div class="h-thread-title" id="thread-title-disp"></div>
-    <div class="h-badge" id="badge-thread"></div>
+<!-- ページ3: スレッド内 -->
+<div id="pg-thread" class="pg">
+  <div class="hdr">
+    <button class="hdr-back" id="btn-back">← 一覧</button>
+    <div class="hdr-thread-title" id="thread-ttl"></div>
+    <div class="hdr-badge" id="badge-thread"></div>
   </div>
-  <div class="posts-scroll" id="posts-area"></div>
+  <div class="posts-wrap" id="posts-area"></div>
   <div class="reply-bar" id="reply-bar">
     <div class="rb-body">
       <div class="rb-label">↩ 返信中</div>
-      <div class="rb-preview" id="reply-preview-txt"></div>
+      <div class="rb-preview" id="reply-prev"></div>
     </div>
-    <button class="rb-cancel" id="reply-cancel-btn">✕</button>
+    <button class="rb-x" id="reply-cancel">✕</button>
   </div>
-  <div class="img-preview-wrap" id="img-preview-wrap">
-    <img class="img-preview" id="img-preview" src="" alt="" />
-    <button class="img-preview-del" id="img-preview-del">✕</button>
+  <div class="img-prev-wrap" id="img-prev-wrap">
+    <img class="img-prev" id="img-prev" src="" alt="">
+    <button class="img-prev-del" id="img-prev-del">✕</button>
   </div>
   <div class="input-bar">
     <button class="img-btn" id="img-btn">🖼</button>
-    <input type="file" id="img-file-input" accept="image/*" style="display:none" />
+    <input type="file" id="img-file" accept="image/*" style="display:none">
     <textarea id="post-input" placeholder="投稿する… (投稿をタップで返信)" rows="1" maxlength="1000"></textarea>
     <button class="send-btn" id="send-btn">➤</button>
   </div>
 </div>
 
-<!-- 確認ダイアログ -->
-
-<div class="confirm-overlay" id="confirm-overlay">
+<!-- 確認ダイアログ（全画面共通・最前面） -->
+<div class="confirm-wrap" id="confirm-wrap">
   <div class="confirm-box">
-    <p id="confirm-msg">削除しますか？</p>
+    <p id="confirm-msg"></p>
     <div class="confirm-btns">
-      <button class="c-no" id="confirm-no">キャンセル</button>
-      <button class="c-yes" id="confirm-yes">削除する</button>
+      <button class="c-no" id="c-no">キャンセル</button>
+      <button class="c-yes" id="c-yes">削除する</button>
     </div>
   </div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, push, onValue, remove, get, update }
+import { getDatabase,ref,push,onValue,remove,get,update }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const fb = initializeApp({
-  apiKey: "AIzaSyDl8UJ_ibhxGrtZ6vfyPit5S3_vACs371U",
-  authDomain: "onlychat-de190.firebaseapp.com",
-  databaseURL: "https://onlychat-de190-default-rtdb.firebaseio.com",
-  projectId: "onlychat-de190",
-  storageBucket: "onlychat-de190.firebasestorage.app",
-  messagingSenderId: "619416583908",
-  appId: "1:619416583908:web:ba5b8487baa5322fb2f6f1"
-});
-const db = getDatabase(fb);
+const db = getDatabase(initializeApp({
+  apiKey:"AIzaSyDl8UJ_ibhxGrtZ6vfyPit5S3_vACs371U",
+  authDomain:"onlychat-de190.firebaseapp.com",
+  databaseURL:"https://onlychat-de190-default-rtdb.firebaseio.com",
+  projectId:"onlychat-de190",
+  storageBucket:"onlychat-de190.firebasestorage.app",
+  messagingSenderId:"619416583908",
+  appId:"1:619416583908:web:ba5b8487baa5322fb2f6f1"
+}));
 
 // ── 状態
-let myId = null;
-let curThread = null;
-let replyTo = null;
-let postsCache = {};
-let pendingImg = null; // base64文字列
+let myId=null, curTid=null, replyTo=null, pendingImg=null;
 
-// ── 1日の画像投稿上限（端末ローカル管理）
-const IMG_LIMIT = 5;
-function todayKey() { return 'sawach_img_' + new Date().toDateString(); }
-function getTodayCount() { return parseInt(localStorage.getItem(todayKey())||'0'); }
-function incTodayCount() { localStorage.setItem(todayKey(), getTodayCount()+1); }
+// ── 画像上限（端末ローカル）
+const IMG_LIMIT=5;
+const dayKey=()=>'sawach_img_'+new Date().toDateString();
+const getDayCount=()=>parseInt(localStorage.getItem(dayKey())||'0');
+const incDayCount=()=>localStorage.setItem(dayKey(),getDayCount()+1);
 
-// ── ページ切り替え
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));
-  document.getElementById(id).classList.add('show');
+// ── 画面切替：visibility方式で完全に切り替え
+function go(id){
+  document.querySelectorAll('.pg').forEach(p=>{
+    p.classList.remove('on');
+  });
+  document.getElementById(id).classList.add('on');
 }
 
 // ── ユーティリティ
-const COLORS = ['#5b52e8','#e85290','#16a34a','#d97706','#0284c7','#9333ea','#0891b2','#dc2626'];
-function col(id) { return COLORS[String(id).split('').reduce((a,c)=>a+c.charCodeAt(0),0)%COLORS.length]; }
-function fmt(ts) {
-  if(!ts) return '';
-  const d = new Date(ts);
-  return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-}
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+const COLS=['#5b52e8','#e85290','#16a34a','#d97706','#0284c7','#9333ea','#0891b2','#dc2626'];
+const col=id=>COLS[String(id).split('').reduce((a,c)=>a+c.charCodeAt(0),0)%COLS.length];
+const fmt=ts=>{
+  if(!ts)return'';
+  const d=new Date(ts);
+  return`${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+};
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
-// ── 画像圧縮（base64返却）
-function compressImage(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = reject;
-    reader.onload = e => {
-      const img = new Image();
-      img.onerror = reject;
-      img.onload = () => {
-        const MAX = 600;
-        let w = img.width, h = img.height;
-        if(w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
-        if(h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
-        const canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        resolve(canvas.toDataURL('image/jpeg', 0.65));
+// ── 確認ダイアログ
+let confirmCb=null;
+const showConfirm=(msg,cb)=>{
+  confirmCb=cb;
+  document.getElementById('confirm-msg').textContent=msg;
+  document.getElementById('confirm-wrap').classList.add('on');
+};
+document.getElementById('c-no').onclick=()=>{
+  document.getElementById('confirm-wrap').classList.remove('on');confirmCb=null;
+};
+document.getElementById('c-yes').onclick=()=>{
+  document.getElementById('confirm-wrap').classList.remove('on');
+  if(confirmCb)confirmCb();confirmCb=null;
+};
+
+// ── 長押し
+function longPress(el,cb){
+  let t=null,moved=false;
+  el.addEventListener('touchstart',()=>{moved=false;t=setTimeout(()=>{if(!moved)cb();},600)},{passive:true});
+  el.addEventListener('touchend',()=>clearTimeout(t));
+  el.addEventListener('touchmove',()=>{moved=true;clearTimeout(t)},{passive:true});
+}
+
+// ── 画像圧縮
+function compress(file){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onerror=rej;
+    r.onload=e=>{
+      const img=new Image();
+      img.onerror=rej;
+      img.onload=()=>{
+        const MAX=600;
+        let w=img.width,h=img.height;
+        if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}
+        if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}
+        const cv=document.createElement('canvas');
+        cv.width=w;cv.height=h;
+        cv.getContext('2d').drawImage(img,0,0,w,h);
+        res(cv.toDataURL('image/jpeg',0.65));
       };
-      img.src = e.target.result;
+      img.src=e.target.result;
     };
-    reader.readAsDataURL(file);
+    r.readAsDataURL(file);
   });
 }
 
-// ── 確認ダイアログ
-let confirmCb = null;
-function showConfirm(msg, cb) {
-  confirmCb = cb;
-  document.getElementById('confirm-msg').textContent = msg;
-  document.getElementById('confirm-overlay').classList.add('show');
-}
-document.getElementById('confirm-no').addEventListener('click', ()=>{
-  document.getElementById('confirm-overlay').classList.remove('show'); confirmCb=null;
-});
-document.getElementById('confirm-yes').addEventListener('click', ()=>{
-  document.getElementById('confirm-overlay').classList.remove('show');
-  if(confirmCb) confirmCb(); confirmCb=null;
-});
-
-// ── 長押し検出
-function addLongPress(el, cb) {
-  let timer=null, moved=false;
-  const start=()=>{ moved=false; timer=setTimeout(()=>{ if(!moved) cb(); },600); };
-  const cancel=()=>clearTimeout(timer);
-  const move=()=>{ moved=true; clearTimeout(timer); };
-  el.addEventListener('touchstart',start,{passive:true});
-  el.addEventListener('touchend',cancel);
-  el.addEventListener('touchmove',move,{passive:true});
-  el.addEventListener('mousedown',start);
-  el.addEventListener('mouseup',cancel);
-  el.addEventListener('mousemove',move);
+// ════════ ログイン ════════
+document.getElementById('id-input').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
+document.getElementById('login-btn').onclick=login;
+function login(){
+  const v=document.getElementById('id-input').value.trim();
+  if(!v||isNaN(v)||Number(v)<=0){alert('数字を入力してください');return;}
+  myId=v;
+  document.getElementById('badge-list').textContent=myId;
+  document.getElementById('badge-thread').textContent=myId;
+  go('pg-list');
+  initList();
 }
 
-// ══════════════════════════════
-//  ログイン
-// ══════════════════════════════
-document.getElementById('id-input').addEventListener('keydown', e=>{ if(e.key==='Enter') login(); });
-document.getElementById('login-btn').addEventListener('click', login);
-function login() {
-  const v = document.getElementById('id-input').value.trim();
-  if(!v||isNaN(v)||Number(v)<=0){ alert('数字を入力してください'); return; }
-  myId = v;
-  document.getElementById('badge-list').textContent = myId;
-  document.getElementById('badge-thread').textContent = myId;
-  showPage('pg-list');
-  initThreadList();
-}
-
-// ══════════════════════════════
-//  スレッド一覧
-// ══════════════════════════════
-function initThreadList() {
-  document.getElementById('sync-txt').textContent = '✅ 同期中';
-  onValue(ref(db,'threads'), snap=>{
-    const data = snap.val()||{};
-    const now = Date.now();
+// ════════ スレッド一覧 ════════
+function initList(){
+  document.getElementById('sync-lbl').textContent='✅ 同期中';
+  onValue(ref(db,'threads'),snap=>{
+    const data=snap.val()||{};
+    const now=Date.now(),week=7*24*60*60*1000;
     Object.entries(data).forEach(([tid,t])=>{
-      if(now-(t.lastActivity||t.createdAt||0) > 7*24*60*60*1000) {
+      if(now-(t.lastActivity||t.createdAt||0)>week){
         remove(ref(db,`threads/${tid}`));
         remove(ref(db,`posts/${tid}`));
         delete data[tid];
@@ -365,32 +468,32 @@ function initThreadList() {
   });
 }
 
-function renderList(data) {
-  const el = document.getElementById('thread-list');
-  const entries = Object.entries(data).sort((a,b)=>(b[1].lastActivity||0)-(a[1].lastActivity||0));
-  if(!entries.length) {
-    el.innerHTML = '<div class="list-empty">スレッドがありません<br>右下の ＋ から作成できます</div>';
+function renderList(data){
+  const el=document.getElementById('thread-list');
+  const entries=Object.entries(data).sort((a,b)=>(b[1].lastActivity||0)-(a[1].lastActivity||0));
+  if(!entries.length){
+    el.innerHTML='<div class="list-empty">スレッドがありません<br>右下の ＋ から作成できます</div>';
     return;
   }
-  el.innerHTML = '';
-  const icons = ['💬','📢','🔥','✨','📝','🎯','💡','🌟'];
+  el.innerHTML='';
+  const icons=['💬','📢','🔥','✨','📝','🎯','💡','🌟'];
   entries.forEach(([tid,t])=>{
-    const d = document.createElement('div');
-    d.className = 'thread-item';
-    const ic = icons[String(tid).split('').reduce((a,c)=>a+c.charCodeAt(0),0)%icons.length];
-    d.innerHTML = `
-      <div class="t-icon">${ic}</div>
-      <div class="t-info">
-        <div class="t-title">${esc(t.title)}</div>
-        <div class="t-meta">${fmt(t.createdAt)} · by ${esc(String(t.createdBy||''))}</div>
+    const d=document.createElement('div');
+    d.className='th-item';
+    const ic=icons[String(tid).split('').reduce((a,c)=>a+c.charCodeAt(0),0)%icons.length];
+    d.innerHTML=`
+      <div class="th-icon">${ic}</div>
+      <div class="th-info">
+        <div class="th-title">${esc(t.title)}</div>
+        <div class="th-meta">${fmt(t.createdAt)} · by ${esc(String(t.createdBy||''))}</div>
       </div>
-      <div class="t-right">
-        <div class="t-count">${t.postCount||0}件</div>
-        <div class="t-arrow">›</div>
+      <div class="th-right">
+        <div class="th-count">${t.postCount||0}件</div>
+        <div class="th-arrow">›</div>
       </div>`;
-    d.addEventListener('click', ()=>enterThread(tid, t.title));
-    if(String(t.createdBy)===String(myId)) {
-      addLongPress(d, ()=>showConfirm(`「${t.title}」を削除しますか？\n（投稿もすべて削除されます）`, async ()=>{
+    d.onclick=()=>enterThread(tid,t.title);
+    if(String(t.createdBy)===String(myId)){
+      longPress(d,()=>showConfirm(`「${t.title}」を削除しますか？\n（投稿もすべて削除されます）`,async()=>{
         await remove(ref(db,`threads/${tid}`));
         await remove(ref(db,`posts/${tid}`));
       }));
@@ -399,232 +502,186 @@ function renderList(data) {
   });
 }
 
-// ── モーダル
-document.getElementById('fab').addEventListener('click', ()=>{
-  document.getElementById('modal-overlay').classList.add('show');
+// モーダル
+document.getElementById('fab').onclick=()=>{
+  document.getElementById('modal-wrap').classList.add('on');
   setTimeout(()=>document.getElementById('thread-title-inp').focus(),100);
-});
-document.getElementById('modal-cancel').addEventListener('click', closeModal);
-document.getElementById('modal-overlay').addEventListener('click', e=>{
-  if(e.target===document.getElementById('modal-overlay')) closeModal();
-});
-document.getElementById('thread-title-inp').addEventListener('keydown', e=>{ if(e.key==='Enter') doCreate(); });
-document.getElementById('modal-ok').addEventListener('click', doCreate);
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('show');
+};
+document.getElementById('modal-cancel').onclick=closeModal;
+document.getElementById('modal-wrap').onclick=e=>{
+  if(e.target===document.getElementById('modal-wrap'))closeModal();
+};
+document.getElementById('thread-title-inp').addEventListener('keydown',e=>{if(e.key==='Enter')doCreate();});
+document.getElementById('modal-ok').onclick=doCreate;
+function closeModal(){
+  document.getElementById('modal-wrap').classList.remove('on');
   document.getElementById('thread-title-inp').value='';
 }
-async function doCreate() {
-  const title = document.getElementById('thread-title-inp').value.trim();
-  if(!title){ alert('タイトルを入力してください'); return; }
-  const now = Date.now();
+async function doCreate(){
+  const title=document.getElementById('thread-title-inp').value.trim();
+  if(!title){alert('タイトルを入力してください');return;}
+  const now=Date.now();
   await push(ref(db,'threads'),{title,createdBy:myId,createdAt:now,lastActivity:now,postCount:0});
   closeModal();
 }
 
-// ══════════════════════════════
-//  スレッド内
-// ══════════════════════════════
-function enterThread(tid, title) {
-  curThread = {id:tid, title};
-  postsCache = {}; replyTo = null; pendingImg = null;
-  document.getElementById('thread-title-disp').textContent = title;
-  document.getElementById('reply-bar').classList.remove('show');
-  document.getElementById('img-preview-wrap').classList.remove('show');
-  document.getElementById('img-btn').classList.remove('has-img');
-  document.getElementById('post-input').value = '';
-  document.getElementById('posts-area').innerHTML = '<div class="list-empty">読み込み中...</div>';
-  showPage('pg-thread');
-  listenPosts(tid);
-}
-
-document.getElementById('btn-back').addEventListener('click', ()=>{
-  curThread=null; replyTo=null; pendingImg=null;
-  showPage('pg-list');
-});
-
-function listenPosts(tid) {
-  onValue(ref(db,`posts/${tid}`), snap=>{
-    if(!curThread||curThread.id!==tid) return;
-    postsCache = snap.val()||{};
-    renderPosts(postsCache);
+// ════════ スレッド内 ════════
+function enterThread(tid,title){
+  curTid=tid;replyTo=null;pendingImg=null;
+  document.getElementById('thread-ttl').textContent=title;
+  document.getElementById('reply-bar').classList.remove('on');
+  document.getElementById('img-prev-wrap').classList.remove('on');
+  document.getElementById('img-btn').classList.remove('on');
+  document.getElementById('post-input').value='';
+  document.getElementById('posts-area').innerHTML='<div class="list-empty">読み込み中...</div>';
+  go('pg-thread');
+  onValue(ref(db,`posts/${tid}`),snap=>{
+    if(curTid!==tid)return;
+    renderPosts(snap.val()||{});
   });
 }
 
-function renderPosts(data) {
-  const area = document.getElementById('posts-area');
-  const entries = Object.entries(data).sort((a,b)=>(a[1].ts||0)-(b[1].ts||0));
-  const atBottom = area.scrollHeight-area.scrollTop-area.clientHeight < 100;
-  if(!entries.length) {
-    area.innerHTML = '<div class="list-empty">まだ投稿はありません<br>下の入力欄から投稿できます</div>';
+document.getElementById('btn-back').onclick=()=>{curTid=null;replyTo=null;pendingImg=null;go('pg-list');};
+
+function renderPosts(data){
+  const area=document.getElementById('posts-area');
+  const entries=Object.entries(data).sort((a,b)=>(a[1].ts||0)-(b[1].ts||0));
+  const atBot=area.scrollHeight-area.scrollTop-area.clientHeight<100;
+  if(!entries.length){
+    area.innerHTML='<div class="list-empty">まだ投稿はありません<br>下の入力欄から投稿できます</div>';
     return;
   }
-  area.innerHTML = '';
-  entries.forEach(([pid,post],i)=>area.appendChild(buildPost(pid,post,i+1,data)));
-  if(atBottom) area.scrollTop = area.scrollHeight;
-  if(replyTo) { const el=document.getElementById('p-'+replyTo.pid); if(el) el.classList.add('replying'); }
+  area.innerHTML='';
+  entries.forEach(([pid,post],i)=>area.appendChild(mkPost(pid,post,i+1,data)));
+  if(atBot)area.scrollTop=area.scrollHeight;
+  if(replyTo){const el=document.getElementById('p-'+replyTo.pid);if(el)el.classList.add('replying');}
 }
 
-function buildPost(pid, post, num, all) {
-  const div = document.createElement('div');
-  div.className = 'post';
-  div.id = 'p-'+pid;
-  const c = col(post.userId);
-  const isMe = String(post.userId)===String(myId);
+function mkPost(pid,post,num,all){
+  const div=document.createElement('div');
+  div.className='post';div.id='p-'+pid;
+  const c=col(post.userId),isMe=String(post.userId)===String(myId);
 
-  // ヘッダー
-  const hdr = document.createElement('div');
-  hdr.className = 'post-header';
-  hdr.innerHTML = `
+  const hdr=document.createElement('div');hdr.className='post-hdr';
+  hdr.innerHTML=`
     <div class="p-av" style="background:${c}">${String(post.userId).slice(0,3)}</div>
     <span class="p-id">${esc(post.userId)}</span>
     <span class="p-num">No.${num}</span>
-    ${isMe?'<span class="p-mine-hint">（長押しで削除）</span>':''}
+    ${isMe?'<span class="p-hint">（長押しで削除）</span>':''}
     <span class="p-time">${fmt(post.ts)}</span>`;
   div.appendChild(hdr);
 
   // 引用
-  if(post.replyTo && all[post.replyTo]) {
-    const o = all[post.replyTo];
-    const prev = o.text?(o.text.length>60?o.text.slice(0,60)+'…':o.text):'（画像）';
-    const q = document.createElement('div');
-    q.className = 'quote';
-    q.innerHTML = `<div class="q-user">${esc(o.userId)} より</div><div class="q-text">${esc(prev)}</div>`;
+  if(post.replyTo&&all[post.replyTo]){
+    const o=all[post.replyTo];
+    const prev=o.text?(o.text.length>60?o.text.slice(0,60)+'…':o.text):'（画像）';
+    const q=document.createElement('div');q.className='quote';
+    q.innerHTML=`<div class="q-user">${esc(o.userId)} より</div><div class="q-text">${esc(prev)}</div>`;
     div.appendChild(q);
   }
-
   // 本文
-  if(post.text) {
-    const body = document.createElement('div');
-    body.className = 'post-body';
-    body.textContent = post.text;
-    div.appendChild(body);
+  if(post.text){const b=document.createElement('div');b.className='post-body';b.textContent=post.text;div.appendChild(b);}
+  // 画像
+  if(post.imageData){
+    const img=document.createElement('img');img.className='post-img';img.src=post.imageData;img.alt='';
+    img.onclick=e=>e.stopPropagation();div.appendChild(img);
   }
-
-  // 画像（base64をそのまま表示）
-  if(post.imageData) {
-    const img = document.createElement('img');
-    img.className = 'post-img';
-    img.src = post.imageData;
-    img.alt = '投稿画像';
-    img.addEventListener('click', e=>e.stopPropagation());
-    div.appendChild(img);
-  }
-
   // いいね
-  const likes = post.likes||{};
-  const likeCount = Object.keys(likes).length;
-  const iLiked = !!likes[myId];
-  const footer = document.createElement('div');
-  footer.className = 'post-footer';
-  const likeBtn = document.createElement('button');
-  likeBtn.className = 'like-btn'+(iLiked?' liked':'');
-  likeBtn.innerHTML = `<span>${iLiked?'❤️':'🤍'}</span><span class="like-count">${likeCount||''}</span>`;
-  likeBtn.addEventListener('click', async e=>{
+  const likes=post.likes||{};
+  const liked=!!likes[myId];
+  const foot=document.createElement('div');foot.className='post-foot';
+  const lb=document.createElement('button');lb.className='like-btn'+(liked?' on':'');
+  lb.innerHTML=`<span>${liked?'❤️':'🤍'}</span><span style="margin-left:2px;font-weight:700">${Object.keys(likes).length||''}</span>`;
+  lb.onclick=async e=>{
     e.stopPropagation();
-    if(iLiked) await remove(ref(db,`posts/${curThread.id}/${pid}/likes/${myId}`));
-    else await update(ref(db,`posts/${curThread.id}/${pid}/likes`),{[myId]:true});
-  });
-  footer.appendChild(likeBtn);
-  div.appendChild(footer);
+    if(liked)await remove(ref(db,`posts/${curTid}/${pid}/likes/${myId}`));
+    else await update(ref(db,`posts/${curTid}/${pid}/likes`),{[myId]:true});
+  };
+  foot.appendChild(lb);div.appendChild(foot);
 
-  // タップ → 返信
-  div.addEventListener('click', ()=>setReply(pid, post.userId, post.text||'（画像）'));
-
-  // 長押し → 自分の投稿のみ削除
-  if(isMe) {
-    addLongPress(div, ()=>showConfirm('この投稿を削除しますか？', async ()=>{
-      await remove(ref(db,`posts/${curThread.id}/${pid}`));
-      const snap = await get(ref(db,`threads/${curThread.id}`));
-      if(snap.exists()) await update(ref(db,`threads/${curThread.id}`),{postCount:Math.max(0,(snap.val().postCount||1)-1)});
+  // タップ→返信
+  div.onclick=()=>setReply(pid,post.userId,post.text||'（画像）');
+  // 長押し→削除（自分のみ）
+  if(isMe){
+    longPress(div,()=>showConfirm('この投稿を削除しますか？',async()=>{
+      await remove(ref(db,`posts/${curTid}/${pid}`));
+      const snap=await get(ref(db,`threads/${curTid}`));
+      if(snap.exists())await update(ref(db,`threads/${curTid}`),{postCount:Math.max(0,(snap.val().postCount||1)-1)});
     }));
   }
   return div;
 }
 
-// ── 返信
-function setReply(pid, userId, text) {
-  replyTo = {pid, userId, text};
-  const prev = `${userId}：${text.length>40?text.slice(0,40)+'…':text}`;
-  document.getElementById('reply-preview-txt').textContent = prev;
-  document.getElementById('reply-bar').classList.add('show');
+// 返信
+function setReply(pid,userId,text){
+  replyTo={pid,userId,text};
+  document.getElementById('reply-prev').textContent=`${userId}：${text.length>40?text.slice(0,40)+'…':text}`;
+  document.getElementById('reply-bar').classList.add('on');
   document.querySelectorAll('.post').forEach(e=>e.classList.remove('replying'));
-  const t = document.getElementById('p-'+pid); if(t) t.classList.add('replying');
+  const t=document.getElementById('p-'+pid);if(t)t.classList.add('replying');
   document.getElementById('post-input').focus();
 }
-document.getElementById('reply-cancel-btn').addEventListener('click', ()=>{
+document.getElementById('reply-cancel').onclick=()=>{
   replyTo=null;
-  document.getElementById('reply-bar').classList.remove('show');
+  document.getElementById('reply-bar').classList.remove('on');
   document.querySelectorAll('.post').forEach(e=>e.classList.remove('replying'));
-});
+};
 
-// ── 画像選択・プレビュー
-document.getElementById('img-btn').addEventListener('click', ()=>{
-  if(getTodayCount()>=IMG_LIMIT){ alert(`画像投稿は1日${IMG_LIMIT}枚までです`); return; }
-  document.getElementById('img-file-input').click();
-});
-document.getElementById('img-file-input').addEventListener('change', async e=>{
-  const file = e.target.files[0]; if(!file) return;
-  e.target.value='';
-  try {
-    const compressed = await compressImage(file);
-    pendingImg = compressed;
-    document.getElementById('img-preview').src = compressed;
-    document.getElementById('img-preview-wrap').classList.add('show');
-    document.getElementById('img-btn').classList.add('has-img');
-  } catch { alert('画像の読み込みに失敗しました'); }
-});
-document.getElementById('img-preview-del').addEventListener('click', ()=>{
+// 画像
+document.getElementById('img-btn').onclick=()=>{
+  if(getDayCount()>=IMG_LIMIT){alert(`画像は1日${IMG_LIMIT}枚まで`);return;}
+  document.getElementById('img-file').click();
+};
+document.getElementById('img-file').onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;e.target.value='';
+  try{
+    pendingImg=await compress(f);
+    document.getElementById('img-prev').src=pendingImg;
+    document.getElementById('img-prev-wrap').classList.add('on');
+    document.getElementById('img-btn').classList.add('on');
+  }catch{alert('画像の読み込みに失敗しました');}
+};
+document.getElementById('img-prev-del').onclick=()=>{
   pendingImg=null;
-  document.getElementById('img-preview-wrap').classList.remove('show');
-  document.getElementById('img-btn').classList.remove('has-img');
-});
+  document.getElementById('img-prev-wrap').classList.remove('on');
+  document.getElementById('img-btn').classList.remove('on');
+};
 
-// ── 送信
-document.getElementById('post-input').addEventListener('keydown', e=>{
-  if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); doPost(); }
+// 送信
+document.getElementById('post-input').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();doPost();}
 });
-document.getElementById('post-input').addEventListener('input', function(){
+document.getElementById('post-input').addEventListener('input',function(){
   this.style.height='auto';
   this.style.height=Math.min(this.scrollHeight,100)+'px';
 });
-document.getElementById('send-btn').addEventListener('click', doPost);
+document.getElementById('send-btn').onclick=doPost;
 
-async function doPost() {
-  const inp = document.getElementById('post-input');
-  const text = inp.value.trim();
-  if(!text && !pendingImg) return;
-  if(!curThread) return;
+async function doPost(){
+  const inp=document.getElementById('post-input');
+  const text=inp.value.trim();
+  if(!text&&!pendingImg)return;
+  if(!curTid)return;
+  if(pendingImg&&getDayCount()>=IMG_LIMIT){alert(`画像は1日${IMG_LIMIT}枚まで`);return;}
 
-  // 画像上限チェック
-  if(pendingImg && getTodayCount()>=IMG_LIMIT) {
-    alert(`画像投稿は1日${IMG_LIMIT}枚までです`); return;
-  }
-
-  inp.value=''; inp.style.height='auto';
-  const now = Date.now();
-  const postData = {userId:myId, text:text||'', ts:now};
-  if(replyTo) postData.replyTo = replyTo.pid;
-  if(pendingImg) {
-    postData.imageData = pendingImg; // base64をDBに直接保存
-    incTodayCount();
+  inp.value='';inp.style.height='auto';
+  const now=Date.now();
+  const data={userId:myId,text:text||'',ts:now};
+  if(replyTo)data.replyTo=replyTo.pid;
+  if(pendingImg){
+    data.imageData=pendingImg;
+    incDayCount();
     pendingImg=null;
-    document.getElementById('img-preview-wrap').classList.remove('show');
-    document.getElementById('img-btn').classList.remove('has-img');
+    document.getElementById('img-prev-wrap').classList.remove('on');
+    document.getElementById('img-btn').classList.remove('on');
   }
-
-  await push(ref(db,`posts/${curThread.id}`), postData);
-  const snap = await get(ref(db,`threads/${curThread.id}`));
-  if(snap.exists()) {
-    await update(ref(db,`threads/${curThread.id}`),{
-      lastActivity:now, postCount:(snap.val().postCount||0)+1
-    });
-  }
+  await push(ref(db,`posts/${curTid}`),data);
+  const snap=await get(ref(db,`threads/${curTid}`));
+  if(snap.exists())await update(ref(db,`threads/${curTid}`),{lastActivity:now,postCount:(snap.val().postCount||0)+1});
   replyTo=null;
-  document.getElementById('reply-bar').classList.remove('show');
+  document.getElementById('reply-bar').classList.remove('on');
   document.querySelectorAll('.post').forEach(e=>e.classList.remove('replying'));
 }
 </script>
-
 </body>
 </html>
