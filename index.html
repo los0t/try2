@@ -18,7 +18,7 @@ body{height:100%;overflow:hidden;font-family:'Noto Sans JP',sans-serif;backgroun
 
 .pg{position:fixed;inset:0;display:flex;flex-direction:column;background:#fff;visibility:hidden;pointer-events:none;overflow:hidden}
 .pg.on{visibility:visible;pointer-events:auto}
-#pg-login,#pg-pin,#pg-pin-set,#pg-nick{align-items:center;justify-content:center;background:#f4f4f4}
+#pg-login,#pg-pin,#pg-pin-set,#pg-nick,#pg-admin-pin{align-items:center;justify-content:center;background:#f4f4f4}
 
 :root{
 –sur:#fff;–card:#f4f4f4;–bdr:#ccc;
@@ -159,6 +159,9 @@ padding:14px;text-align:center;outline:none;
 .admin-card-row{font-size:13px;color:#111;margin-bottom:3px;display:flex;gap:8px}
 .admin-card-label{color:#888;flex-shrink:0;width:80px}
 .admin-empty{text-align:center;color:#888;font-size:13px;padding:40px 20px}
+.admin-tab{flex:1;background:#fff;border:none;border-bottom:3px solid transparent;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;color:#888}
+.admin-tab.on{color:#111;border-bottom-color:#111}
+.admin-del-btn{background:#111;color:#fff;border:none;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:inherit;margin-top:8px}
 
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-thumb{background:#ccc;border-radius:2px}
@@ -269,13 +272,31 @@ padding:14px;text-align:center;outline:none;
   </div>
 </div>
 
-<!-- ページ7: 管理者ページ -->
+<!-- ページ7: 管理者PIN -->
+
+<div id="pg-admin-pin" class="pg">
+  <div class="auth-box">
+    <div class="logo">さわch</div>
+    <p class="auth-desc">管理者PINを入力してください</p>
+    <div class="auth-label">PINコード（3桁）</div>
+    <input id="admin-pin-input" class="big-input pin-input" type="number" inputmode="numeric" placeholder="●●●" maxlength="3" autocomplete="off">
+    <div class="auth-error" id="admin-pin-err"></div>
+    <button class="auth-btn" id="admin-pin-btn">ログイン</button>
+    <button class="skip-btn" id="admin-pin-back">← 戻る</button>
+  </div>
+</div>
+
+<!-- ページ8: 管理者ページ -->
 
 <div id="pg-admin" class="pg">
   <div class="hdr">
     <div class="hdr-title">さわch</div>
-    <span style="font-size:12px;color:var(--mut)">管理者ページ</span>
+    <span style="font-size:12px;color:#aaa">管理者</span>
     <button class="hdr-back" style="margin-left:auto" id="admin-back">← 戻る</button>
+  </div>
+  <div style="display:flex;border-bottom:2px solid #111;background:#fff;flex-shrink:0">
+    <button class="admin-tab on" id="tab-accounts" onclick="switchTab('accounts')">アカウント</button>
+    <button class="admin-tab" id="tab-threads" onclick="switchTab('threads')">スレッド</button>
   </div>
   <div class="admin-wrap" id="admin-list"></div>
 </div>
@@ -298,6 +319,7 @@ import { getDatabase,ref,push,onValue,remove,get,set,update }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const ADMIN_ID = '53649754';
+const ADMIN_PIN = '000'; // ← ここを好きな3桁に変更してください
 
 const db = getDatabase(initializeApp({
   apiKey:"AIzaSyDl8UJ_ibhxGrtZ6vfyPit5S3_vACs371U",
@@ -370,20 +392,7 @@ function compress(file){
   });
 }
 
-// ════════════════════════════════
-//  ボタン活性化（入力に応じて色変化）
-// ════════════════════════════════
-function watchInput(inputId,btnId,validate){
-  const inp=document.getElementById(inputId);
-  const btn=document.getElementById(btnId);
-  const check=()=>{if(validate(inp.value.trim()))btn.classList.add('ready');else btn.classList.remove('ready');};
-  inp.addEventListener('input',check);
-  check();
-}
-watchInput('id-input','login-btn',v=>v.length>0&&!isNaN(v)&&Number(v)>0);
-watchInput('pin-set-input','pin-set-btn',v=>/^\d{3}$/.test(v));
-watchInput('pin-input','pin-btn',v=>/^\d{3}$/.test(v));
-watchInput('nick-input','nick-btn',v=>v.length>0);
+
 
 // ════════════════════════════════
 //  ログインフロー
@@ -398,10 +407,12 @@ async function stepId(){
   document.getElementById('login-err').textContent='';
   if(!v||isNaN(v)||Number(v)<=0){document.getElementById('login-err').textContent='正しい数字を入力してください';return;}
 
-  // 管理者ID
+  // 管理者ID → PIN画面へ
   if(v===ADMIN_ID){
-    go('pg-admin');
-    loadAdmin();
+    document.getElementById('admin-pin-input').value='';
+    document.getElementById('admin-pin-err').textContent='';
+    go('pg-admin-pin');
+    setTimeout(()=>document.getElementById('admin-pin-input').focus(),100);
     return;
   }
 
@@ -472,12 +483,34 @@ document.getElementById('nick-input').addEventListener('keydown',e=>{if(e.key===
 
 async function stepNick(skip){
   const nick=skip?'':(document.getElementById('nick-input').value.trim());
-  // Firebaseにニックネームを保存
   await update(ref(db,`accounts/${pendingIdForReg}`),{nick});
-  // ログイン完了
   myId=pendingIdForReg;
   myNick=nick||null;
-  const badge=displayName();
+  const newName=displayName();
+
+  // 過去の投稿・スレのニックネームを一括同期
+  try{
+    // 全スレッドの投稿を更新
+    const threadsSnap=await get(ref(db,'threads'));
+    const threads=threadsSnap.val()||{};
+    const updatePromises=[];
+    for(const tid of Object.keys(threads)){
+      const postsSnap=await get(ref(db,`posts/${tid}`));
+      const posts=postsSnap.val()||{};
+      for(const [pid,post] of Object.entries(posts)){
+        if(String(post.userId)===String(myId)){
+          updatePromises.push(update(ref(db,`posts/${tid}/${pid}`),{userNick:newName}));
+        }
+      }
+      // スレッド作成者も更新
+      if(String(threads[tid].createdBy)===String(myId)){
+        updatePromises.push(update(ref(db,`threads/${tid}`),{createdByNick:newName}));
+      }
+    }
+    await Promise.all(updatePromises);
+  }catch(e){console.warn('ニックネーム同期エラー',e);}
+
+  const badge=newName;
   document.getElementById('badge-list').textContent=badge;
   document.getElementById('badge-thread').textContent=badge;
   go('pg-list');
@@ -487,26 +520,116 @@ async function stepNick(skip){
 // ════════════════════════════════
 //  管理者ページ
 // ════════════════════════════════
-document.getElementById('admin-back').onclick=()=>{go('pg-login');document.getElementById('id-input').value='';};
+// 管理者PINログイン
+document.getElementById('admin-pin-input').addEventListener('keydown',e=>{if(e.key==='Enter')stepAdminPin();});
+document.getElementById('admin-pin-btn').onclick=stepAdminPin;
+document.getElementById('admin-pin-back').onclick=()=>{go('pg-login');document.getElementById('id-input').value='';};
+function stepAdminPin(){
+  const pin=document.getElementById('admin-pin-input').value.trim();
+  if(pin!==ADMIN_PIN){document.getElementById('admin-pin-err').textContent='PINが違います';return;}
+  go('pg-admin');
+  loadAdmin();
+}
+
+let adminTab='accounts';
+function switchTab(tab){
+  adminTab=tab;
+  document.getElementById('tab-accounts').classList.toggle('on',tab==='accounts');
+  document.getElementById('tab-threads').classList.toggle('on',tab==='threads');
+  loadAdmin();
+}
+
+document.getElementById('admin-back').onclick=()=>{go('pg-login');document.getElementById('id-input').value='';}; 
 
 function loadAdmin(){
-  onValue(ref(db,'accounts'),snap=>{
-    const el=document.getElementById('admin-list');
-    const data=snap.val()||{};
-    const entries=Object.entries(data).sort((a,b)=>a[1].createdAt-b[1].createdAt);
-    if(!entries.length){el.innerHTML='<div class="admin-empty">アカウントがありません</div>';return;}
-    el.innerHTML='';
-    entries.forEach(([id,acc])=>{
-      const card=document.createElement('div');
-      card.className='admin-card';
-      card.innerHTML=`
-        <div class="admin-card-id">${esc(id)}</div>
-        <div class="admin-card-row"><span class="admin-card-label">ニックネーム</span><span>${esc(acc.nick||'（未設定）')}</span></div>
-        <div class="admin-card-row"><span class="admin-card-label">PIN</span><span>${esc(acc.pin||'')}</span></div>
-        <div class="admin-card-row"><span class="admin-card-label">登録日時</span><span>${fmt(acc.createdAt)}</span></div>
-      `;
-      el.appendChild(card);
+  const el=document.getElementById('admin-list');
+  el.innerHTML='<div class="admin-empty">読み込み中...</div>';
+  if(adminTab==='accounts'){
+    get(ref(db,'accounts')).then(snap=>{
+      const data=snap.val()||{};
+      const entries=Object.entries(data).sort((a,b)=>a[1].createdAt-b[1].createdAt);
+      if(!entries.length){el.innerHTML='<div class="admin-empty">アカウントがありません</div>';return;}
+      el.innerHTML='';
+      entries.forEach(([id,acc])=>{
+        const card=document.createElement('div');card.className='admin-card';
+        const delBtn=document.createElement('button');delBtn.className='admin-del-btn';delBtn.textContent='アカウント削除';
+        delBtn.onclick=()=>showConfirm(`ID:${id} を削除しますか？`,async()=>{
+          await remove(ref(db,`accounts/${id}`));
+          // そのユーザーの投稿のニックネームをリセット（userIdは残す）
+          loadAdmin();
+        });
+        card.innerHTML=`
+          <div class="admin-card-id">${esc(id)}</div>
+          <div class="admin-card-row"><span class="admin-card-label">ニックネーム</span><span>${esc(acc.nick||'（未設定）')}</span></div>
+          <div class="admin-card-row"><span class="admin-card-label">PIN</span><span>${esc(acc.pin||'')}</span></div>
+          <div class="admin-card-row"><span class="admin-card-label">登録日時</span><span>${fmt(acc.createdAt)}</span></div>
+        `;
+        card.appendChild(delBtn);
+        el.appendChild(card);
+      });
     });
+  } else {
+    // スレッド一覧（管理者用）
+    get(ref(db,'threads')).then(snap=>{
+      const data=snap.val()||{};
+      const entries=Object.entries(data).sort((a,b)=>(b[1].lastActivity||0)-(a[1].lastActivity||0));
+      if(!entries.length){el.innerHTML='<div class="admin-empty">スレッドがありません</div>';return;}
+      el.innerHTML='';
+      entries.forEach(([tid,t])=>{
+        const card=document.createElement('div');card.className='admin-card';
+        const delBtn=document.createElement('button');delBtn.className='admin-del-btn';delBtn.textContent='スレッド削除';
+        delBtn.onclick=()=>showConfirm(`「${t.title}」を削除しますか？`,async()=>{
+          await remove(ref(db,`threads/${tid}`));
+          await remove(ref(db,`posts/${tid}`));
+          loadAdmin();
+        });
+        // 投稿一覧ボタン
+        const viewBtn=document.createElement('button');viewBtn.className='admin-del-btn';
+        viewBtn.style.background='#fff';viewBtn.style.color='#111';viewBtn.style.border='1.5px solid #111';viewBtn.style.marginRight='6px';
+        viewBtn.textContent='投稿を管理';
+        viewBtn.onclick=()=>adminManagePosts(tid,t.title);
+        card.innerHTML=`
+          <div class="admin-card-id">${esc(t.title)}</div>
+          <div class="admin-card-row"><span class="admin-card-label">作成者</span><span>${esc(String(t.createdByNick||t.createdBy||''))}</span></div>
+          <div class="admin-card-row"><span class="admin-card-label">投稿数</span><span>${t.postCount||0}件</span></div>
+          <div class="admin-card-row"><span class="admin-card-label">最終活動</span><span>${fmt(t.lastActivity)}</span></div>
+        `;
+        const btnRow=document.createElement('div');btnRow.style.marginTop='8px';
+        btnRow.appendChild(viewBtn);btnRow.appendChild(delBtn);
+        card.appendChild(btnRow);
+        el.appendChild(card);
+      });
+    });
+  }
+}
+
+async function adminManagePosts(tid,title){
+  const snap=await get(ref(db,`posts/${tid}`));
+  const data=snap.val()||{};
+  const el=document.getElementById('admin-list');
+  const entries=Object.entries(data).sort((a,b)=>(a[1].ts||0)-(b[1].ts||0));
+  el.innerHTML=`<div style="padding:12px 16px;font-weight:700;font-size:14px;border-bottom:1px solid #ddd;display:flex;align-items:center;gap:10px">
+    <button onclick="loadAdmin();switchTab('threads')" style="background:none;border:1px solid #ccc;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer">← 戻る</button>
+    ${esc(title)} の投稿
+  </div>`;
+  if(!entries.length){el.innerHTML+='<div class="admin-empty">投稿がありません</div>';return;}
+  entries.forEach(([pid,post],i)=>{
+    const card=document.createElement('div');card.className='admin-card';
+    const delBtn=document.createElement('button');delBtn.className='admin-del-btn';delBtn.textContent='投稿削除';
+    delBtn.onclick=()=>showConfirm('この投稿を削除しますか？',async()=>{
+      await remove(ref(db,`posts/${tid}/${pid}`));
+      const tsnap=await get(ref(db,`threads/${tid}`));
+      if(tsnap.exists())await update(ref(db,`threads/${tid}`),{postCount:Math.max(0,(tsnap.val().postCount||1)-1)});
+      adminManagePosts(tid,title);
+    });
+    const preview=post.text?post.text.slice(0,60)+(post.text.length>60?'…':''):'（画像）';
+    card.innerHTML=`
+      <div class="admin-card-row"><span class="admin-card-label">No.${i+1}</span><span style="font-weight:700">${esc(post.userNick||post.userId)}</span></div>
+      <div class="admin-card-row"><span class="admin-card-label">内容</span><span>${esc(preview)}</span></div>
+      <div class="admin-card-row"><span class="admin-card-label">投稿日時</span><span>${fmt(post.ts)}</span></div>
+    `;
+    card.appendChild(delBtn);
+    el.appendChild(card);
   });
 }
 
