@@ -44,8 +44,12 @@ font-size:30px;font-weight:700;padding:14px;text-align:center;outline:none;lette
 .big-input::placeholder{font-size:15px;letter-spacing:0;color:var(–mut)}
 .pin-input{font-size:36px;letter-spacing:8px;max-width:180px}
 .auth-btn{
-width:100%;background:var(–acc);color:#fff;border:none;border-radius:12px;
-padding:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;
+width:100%;background:#c4c2d6;color:#fff;border:none;border-radius:12px;
+padding:14px;font-size:16px;font-weight:700;cursor:not-allowed;font-family:inherit;
+transition:background .2s;
+}
+.auth-btn.ready{
+background:var(–acc);cursor:pointer;
 }
 .skip-btn{
 background:none;border:none;color:var(–mut);font-size:13px;cursor:pointer;
@@ -363,6 +367,21 @@ function compress(file){
     r.readAsDataURL(file);
   });
 }
+
+// ════════════════════════════════
+//  ボタン活性化（入力に応じて色変化）
+// ════════════════════════════════
+function watchInput(inputId,btnId,validate){
+  const inp=document.getElementById(inputId);
+  const btn=document.getElementById(btnId);
+  const check=()=>{if(validate(inp.value.trim()))btn.classList.add('ready');else btn.classList.remove('ready');};
+  inp.addEventListener('input',check);
+  check();
+}
+watchInput('id-input','login-btn',v=>v.length>0&&!isNaN(v)&&Number(v)>0);
+watchInput('pin-set-input','pin-set-btn',v=>/^\d{3}$/.test(v));
+watchInput('pin-input','pin-btn',v=>/^\d{3}$/.test(v));
+watchInput('nick-input','nick-btn',v=>v.length>0);
 
 // ════════════════════════════════
 //  ログインフロー
