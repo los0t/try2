@@ -44,12 +44,8 @@ font-size:30px;font-weight:700;padding:14px;text-align:center;outline:none;lette
 .big-input::placeholder{font-size:15px;letter-spacing:0;color:var(–mut)}
 .pin-input{font-size:36px;letter-spacing:8px;max-width:180px}
 .auth-btn{
-width:100%;background:#c4c2d6;color:#fff;border:none;border-radius:12px;
-padding:14px;font-size:16px;font-weight:700;cursor:not-allowed;font-family:inherit;
-transition:background .2s;
-}
-.auth-btn.ready{
-background:var(–acc);cursor:pointer;
+width:100%;background:var(–acc);color:#fff;border:none;border-radius:12px;
+padding:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;
 }
 .skip-btn{
 background:none;border:none;color:var(–mut);font-size:13px;cursor:pointer;
@@ -332,7 +328,7 @@ const fmt=ts=>{
   return`${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 };
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const displayName=()=>myNick||myId;
+const displayName=()=>(myNick||'名無しさん')+'('+myId+')';
 
 // ── 確認ダイアログ
 let confirmCb=null;
@@ -475,7 +471,7 @@ async function stepNick(skip){
   // ログイン完了
   myId=pendingIdForReg;
   myNick=nick||null;
-  const badge=myNick?`${myNick}(${myId})`:myId;
+  const badge=displayName();
   document.getElementById('badge-list').textContent=badge;
   document.getElementById('badge-thread').textContent=badge;
   go('pg-list');
